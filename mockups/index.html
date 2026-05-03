@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsKit · Mockup UI (WhatsApp Style)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --wa-green: #25D366;
+  --wa-green-dark: #008069;
+  --wa-green-darker: #054d44;
+  --wa-teal: #128C7E;
+  --wa-bg: #FFFFFF;
+  --wa-bg-page: #F0F2F5;
+  --wa-bubble-sent: #D9FDD3;
+  --wa-bubble-received: #FFFFFF;
+  --wa-text-primary: #111B21;
+  --wa-text-secondary: #667781;
+  --wa-divider: #E9EDEF;
+  --wa-chat-bg: #EFE7DD;
+  --wa-blue: #34B7F1;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  min-height: 100vh;
+  color: white;
+}
+body { padding: 50px 20px 80px; }
+
+.page-header {
+  text-align: center;
+  margin-bottom: 50px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.page-header .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  padding: 12px 24px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
+}
+.page-header .logo i { font-size: 28px; }
+.page-header .logo span {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+.page-header h1 {
+  font-size: 48px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #25D366 0%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.page-header p {
+  color: #94a3b8;
+  font-size: 18px;
+  line-height: 1.6;
+}
+.tagline {
+  display: inline-block;
+  background: rgba(37, 211, 102, 0.1);
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  color: #25D366;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 16px;
+}
+
+.phones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 50px 30px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.phone-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.phone {
+  background: #0f172a;
+  border-radius: 44px;
+  padding: 10px;
+  box-shadow:
+    0 0 0 2px #1e293b,
+    0 30px 60px -15px rgba(0,0,0,0.6),
+    0 18px 36px -18px rgba(0,0,0,0.4);
+  width: 360px;
+  position: relative;
+}
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 24px;
+  background: #0f172a;
+  border-radius: 12px;
+  z-index: 10;
+}
+.phone-screen {
+  background: var(--wa-bg);
+  border-radius: 36px;
+  overflow: hidden;
+  height: 740px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-label {
+  margin-top: 20px;
+  text-align: center;
+}
+.phone-label .num {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  background: var(--wa-green);
+  color: white;
+  border-radius: 50%;
+  line-height: 28px;
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 8px;
+}
+.phone-label .title {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+.phone-label .desc {
+  display: block;
+  margin-top: 6px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+/* ====== PHONE INTERNAL UI ====== */
+
+/* Status bar */
+.status-bar {
+  height: 32px;
+  background: var(--wa-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 22px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+  flex-shrink: 0;
+  padding-top: 8px;
+}
+.status-bar .right { display: flex; gap: 6px; align-items: center; font-size: 12px; }
+.status-bar.dark { background: #1F2C34; color: white; }
+
+/* App Bar */
+.app-bar {
+  background: var(--wa-bg);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--wa-divider);
+  flex-shrink: 0;
+}
+.app-bar-left { display: flex; align-items: center; gap: 16px; }
+.app-bar-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--wa-green-dark);
+  letter-spacing: -0.3px;
+}
+.app-bar-title-back {
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--wa-text-primary);
+}
+.app-bar-icons { display: flex; gap: 22px; color: var(--wa-text-secondary); font-size: 19px; }
+.app-bar-icons i { cursor: pointer; }
+.back-icon { color: var(--wa-text-primary); font-size: 20px; cursor: pointer; }
+
+/* Search bar (modern WhatsApp) */
+.search-bar {
+  margin: 8px 12px;
+  background: var(--wa-bg-page);
+  padding: 10px 16px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--wa-text-secondary);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Body */
+.body {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--wa-bg);
+  position: relative;
+}
+.body::-webkit-scrollbar { display: none; }
+
+/* List items (WhatsApp style chat row) */
+.list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.list-item:hover { background: var(--wa-bg-page); }
+.list-item-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  flex-shrink: 0;
+  background: var(--wa-green);
+}
+.avatar-purple { background: linear-gradient(135deg, #a855f7, #6366f1); }
+.avatar-pink   { background: linear-gradient(135deg, #ec4899, #f43f5e); }
+.avatar-blue   { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+.avatar-orange { background: linear-gradient(135deg, #f97316, #eab308); }
+.avatar-green  { background: linear-gradient(135deg, #25D366, #128C7E); }
+.list-item-content {
+  flex: 1;
+  border-bottom: 1px solid var(--wa-divider);
+  padding-bottom: 12px;
+  margin-top: 12px;
+}
+.list-item:first-child .list-item-content { margin-top: 0; }
+.list-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.list-item-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--wa-text-primary);
+  margin-bottom: 4px;
+}
+.list-item-subtitle {
+  font-size: 13.5px;
+  color: var(--wa-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+.list-item-time {
+  font-size: 11px;
+  color: var(--wa-text-secondary);
+}
+.list-item-badge {
+  background: var(--wa-green);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+/* FAB */
+.fab {
+  position: absolute;
+  bottom: 80px;
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  background: var(--wa-green);
+  color: white;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5);
+  cursor: pointer;
+  z-index: 5;
+}
+
+/* Bottom Navigation (modern WA Android) */
+.bottom-nav {
+  background: var(--wa-bg);
+  border-top: 1px solid var(--wa-divider);
+  display: flex;
+  padding: 8px 0 12px;
+  flex-shrink: 0;
+}
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--wa-text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+}
+.bottom-nav-item .icon-wrap {
+  padding: 4px 18px;
+  border-radius: 20px;
+  font-size: 18px;
+}
+.bottom-nav-item.active { color: var(--wa-green-dark); font-weight: 700; }
+.bottom-nav-item.active .icon-wrap {
+  background: rgba(37, 211, 102, 0.15);
+  color: var(--wa-green-dark);
+}
+
+/* Section header */
+.section-header {
+  padding: 12px 16px 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--wa-green-dark);
+  letter-spacing: 0.3px;
+}
+
+/* Hero card */
+.hero-card {
+  margin: 12px;
+  padding: 20px;
+  background: linear-gradient(135deg, #25D366 0%, #008069 100%);
+  border-radius: 16px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.hero-card::after {
+  content: '';
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 120px;
+  height: 120px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+.hero-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 2;
+}
+.hero-card p {
+  font-size: 13px;
+  opacity: 0.95;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 14px;
+}
+.hero-card .btn {
+  background: white;
+  color: var(--wa-green-dark);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Feature chip */
+.chip-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+.chip-row::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0;
+  background: var(--wa-bg-page);
+  border: 1px solid var(--wa-divider);
+  padding: 7px 14px;
+  border-radius: 18px;
+  font-size: 13px;
+  color: var(--wa-text-primary);
+  font-weight: 500;
+}
+.chip.active {
+  background: var(--wa-green-dark);
+  color: white;
+  border-color: var(--wa-green-dark);
+}
+
+/* Sticker grid */
+.sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px;
+}
+.sticker-item {
+  aspect-ratio: 1;
+  background: var(--wa-bg-page);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  border: 1px solid var(--wa-divider);
+}
+.sticker-item.add {
+  background: rgba(37, 211, 102, 0.1);
+  border: 2px dashed var(--wa-green);
+  color: var(--wa-green-dark);
+  font-size: 28px;
+}
+
+/* Form / inputs */
+.form-section { padding: 16px; }
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wa-text-secondary);
+  margin-bottom: 8px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.country-pick {
+  background: var(--wa-bg-page);
+  border: 1px solid var(--wa-divider);
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  min-width: 100px;
+}
+.text-input {
+  flex: 1;
+  background: var(--wa-bg-page);
+  border: 1px solid var(--wa-divider);
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  color: var(--wa-text-primary);
+}
+.text-area {
+  width: 100%;
+  background: var(--wa-bg-page);
+  border: 1px solid var(--wa-divider);
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  color: var(--wa-text-primary);
+  min-height: 80px;
+  font-family: inherit;
+  resize: none;
+}
+.btn-primary {
+  width: 100%;
+  background: var(--wa-green);
+  color: white;
+  padding: 16px;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4);
+  margin-top: 8px;
+}
+.btn-secondary {
+  width: 100%;
+  background: var(--wa-bg-page);
+  color: var(--wa-text-primary);
+  padding: 14px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+}
+
+/* Format buttons (text formatter) */
+.format-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+.format-btn {
+  background: var(--wa-bg-page);
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--wa-text-primary);
+  border: 1px solid var(--wa-divider);
+}
+.format-btn.bold { font-weight: 900; }
+.format-btn.italic { font-style: italic; }
+.format-btn.strike { text-decoration: line-through; }
+.format-btn.mono { font-family: 'Courier New', monospace; }
+
+/* Fancy fonts grid */
+.fonts-list {
+  padding: 0 16px;
+}
+.fonts-list-item {
+  background: var(--wa-bg-page);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  color: var(--wa-text-primary);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.copy-btn {
+  background: var(--wa-green);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Wishes cards */
+.wishes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+}
+.wish-card {
+  aspect-ratio: 0.75;
+  border-radius: 12px;
+  padding: 14px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+.wish-card.bday    { background: linear-gradient(135deg, #ec4899, #f43f5e); }
+.wish-card.eid     { background: linear-gradient(135deg, #10b981, #14b8a6); }
+.wish-card.diwali  { background: linear-gradient(135deg, #f97316, #eab308); }
+.wish-card.love    { background: linear-gradient(135deg, #ef4444, #ec4899); }
+.wish-card.motiv   { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+.wish-card.shadi   { background: linear-gradient(135deg, #f43f5e, #f59e0b); }
+.wish-card .text { font-size: 13px; line-height: 1.4; }
+.wish-card .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  opacity: 0.9;
+}
+.wish-card .lang { background: rgba(255,255,255,0.25); padding: 2px 8px; border-radius: 8px; font-weight: 700; }
+
+/* Chat (fake chat preview) */
+.chat-header {
+  background: var(--wa-green-dark);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  flex-shrink: 0;
+}
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ec4899, #f43f5e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.chat-info { flex: 1; }
+.chat-name { font-size: 15px; font-weight: 600; }
+.chat-status { font-size: 12px; opacity: 0.85; }
+.chat-icons { display: flex; gap: 18px; font-size: 18px; }
+
+.chat-body {
+  flex: 1;
+  background: var(--wa-chat-bg);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(0,0,0,0.02) 1px, transparent 1px),
+    radial-gradient(circle at 80% 60%, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 30px 30px;
+  padding: 12px;
+  overflow-y: auto;
+}
+.bubble {
+  max-width: 75%;
+  padding: 7px 10px 8px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  margin-bottom: 4px;
+  position: relative;
+  box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+  line-height: 1.35;
+  color: var(--wa-text-primary);
+}
+.bubble.received {
+  background: var(--wa-bubble-received);
+  border-radius: 0 8px 8px 8px;
+  margin-right: auto;
+}
+.bubble.sent {
+  background: var(--wa-bubble-sent);
+  border-radius: 8px 0 8px 8px;
+  margin-left: auto;
+}
+.bubble .meta {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 11px;
+  color: var(--wa-text-secondary);
+  float: right;
+}
+.bubble .meta i { color: var(--wa-blue); margin-left: 2px; }
+
+.chat-input-bar {
+  background: var(--wa-bg-page);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.chat-input {
+  flex: 1;
+  background: white;
+  border-radius: 24px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--wa-text-secondary);
+  font-size: 14px;
+  border: 1px solid var(--wa-divider);
+}
+.chat-send {
+  width: 44px;
+  height: 44px;
+  background: var(--wa-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+}
+
+/* Info banner */
+.info-banner {
+  margin: 12px;
+  padding: 14px;
+  background: rgba(37, 211, 102, 0.08);
+  border-left: 3px solid var(--wa-green);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--wa-text-primary);
+  line-height: 1.5;
+}
+.info-banner strong { color: var(--wa-green-dark); }
+
+/* Footer */
+.page-footer {
+  text-align: center;
+  margin-top: 80px;
+  color: #64748b;
+  font-size: 14px;
+}
+.page-footer a { color: var(--wa-green); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="logo">
+    <i class="fab fa-whatsapp"></i>
+    <span>WhatsKit</span>
+  </div>
+  <h1>Mockup UI · WhatsApp Style</h1>
+  <p>5 strumenti per WhatsApp in un'unica app Flutter · Design 100% familiare per gli utenti<br>
+  Pronto per Play Store + App Store · Target India / Pakistan / Italia</p>
+  <span class="tagline">✨ Tap su qualsiasi telefono per zoom · scrollabile</span>
+</header>
+
+<div class="phones-grid">
+
+  <!-- ====================================== -->
+  <!-- PHONE 1: HOME HUB                      -->
+  <!-- ====================================== -->
+  <div class="phone-wrapper">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+          </div>
+        </div>
+        <div class="app-bar">
+          <div class="app-bar-left">
+            <span class="app-bar-title">WhatsKit</span>
+          </div>
+          <div class="app-bar-icons">
+            <i class="fas fa-camera"></i>
+            <i class="fas fa-search"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+          </div>
+        </div>
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <span>Cerca strumenti...</span>
+        </div>
+        <div class="body">
+          <div class="section-header">STRUMENTI WHATSAPP</div>
+          <div class="list-item">
+            <div class="list-item-avatar avatar-pink">🎨</div>
+            <div class="list-item-content">
+              <div class="list-item-row">
+                <span class="list-item-title">Sticker Maker</span>
+                <span class="list-item-time">AI ✨</span>
+              </div>
+              <span class="list-item-subtitle">Crea sticker da foto · Rimuovi sfondo</span>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-avatar avatar-green">💬</div>
+            <div class="list-item-content">
+              <div class="list-item-row">
+                <span class="list-item-title">Direct Chat</span>
+                <span class="list-item-time">⚡</span>
+              </div>
+              <span class="list-item-subtitle">Chatta senza salvare il numero</span>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-avatar avatar-purple">✨</div>
+            <div class="list-item-content">
+              <div class="list-item-row">
+                <span class="list-item-title">Text Formatter</span>
+                <span class="list-item-time">100+</span>
+              </div>
+              <span class="list-item-subtitle">𝓕𝓪𝓷𝓬𝔂 𝓕𝓸𝓷𝓽𝓼 · Bold · Italic</span>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-avatar avatar-orange">🎂</div>
+            <div class="list-item-content">
+              <div class="list-item-row">
+                <span class="list-item-title">Wishes & Status</span>
+                <span class="list-item-time">NEW</span>
+              </div>
+              <span class="list-item-subtitle">Eid · Diwali · Birthday · Love</span>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-avatar avatar-blue">😂</div>
+            <div class="list-item-content">
+              <div class="list-item-row">
+                <span class="list-item-title">Fake Chat Generator</span>
+                <span class="list-item-time">😆</span>
+              </div>
+              <span class="list-item-subtitle">Crea chat finte per scherzi</span>
+            </div>
+          </div>
+          <div class="info-banner">
+            <strong>💎 Premium</strong> · Rimuovi pubblicità + sticker pack esclusivi · €2.99
+          </div>
+        </div>
+        <div class="fab"><i class="fas fa-pen"></i></div>
+        <div class="bottom-nav">
+          <div class="bottom-nav-item active">
+            <div class="icon-wrap"><i class="fas fa-toolbox"></i></div>
+            Tools
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-smile"></i></div>
+            Stickers
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-heart"></i></div>
+            Wishes
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-gear"></i></div>
+            Settings
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">
+      <span class="num">1</span><span class="title">Home Hub</span>
+      <span class="desc">Schermata principale · stile chat list di WhatsApp</span>
+    </div>
+  </div>
+
+  <!-- ====================================== -->
+  <!-- PHONE 2: STICKER MAKER                 -->
+  <!-- ====================================== -->
+  <div class="phone-wrapper">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+          </div>
+        </div>
+        <div class="app-bar">
+          <div class="app-bar-left">
+            <i class="fas fa-arrow-left back-icon"></i>
+            <span class="app-bar-title-back">Sticker Maker</span>
+          </div>
+          <div class="app-bar-icons">
+            <i class="fas fa-camera"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+          </div>
+        </div>
+        <div class="body">
+          <div class="hero-card">
+            <h3>✨ AI Background Remove</h3>
+            <p>Carica una foto · L'AI rimuove lo sfondo automaticamente · Crea sticker pronti per WhatsApp</p>
+            <span class="btn"><i class="fas fa-wand-magic-sparkles"></i> Inizia ora</span>
+          </div>
+
+          <div class="section-header">CREA STICKER</div>
+          <div class="chip-row">
+            <span class="chip active">📷 Da Foto</span>
+            <span class="chip">🖼️ Da Galleria</span>
+            <span class="chip">📝 Da Testo</span>
+            <span class="chip">🎨 Disegna</span>
+          </div>
+
+          <div class="section-header">I MIEI STICKER (12)</div>
+          <div class="sticker-grid">
+            <div class="sticker-item add"><i class="fas fa-plus"></i></div>
+            <div class="sticker-item">😂</div>
+            <div class="sticker-item">❤️</div>
+            <div class="sticker-item">🎉</div>
+            <div class="sticker-item">🔥</div>
+            <div class="sticker-item">😎</div>
+            <div class="sticker-item">🌹</div>
+            <div class="sticker-item">👏</div>
+            <div class="sticker-item">🌟</div>
+          </div>
+          <div style="padding: 0 16px 16px;">
+            <button class="btn-primary">
+              <i class="fab fa-whatsapp"></i> Aggiungi pacchetto a WhatsApp
+            </button>
+          </div>
+        </div>
+        <div class="fab"><i class="fas fa-camera"></i></div>
+        <div class="bottom-nav">
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-toolbox"></i></div>
+            Tools
+          </div>
+          <div class="bottom-nav-item active">
+            <div class="icon-wrap"><i class="fas fa-smile"></i></div>
+            Stickers
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-heart"></i></div>
+            Wishes
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-gear"></i></div>
+            Settings
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">
+      <span class="num">2</span><span class="title">Sticker Maker</span>
+      <span class="desc">Rimuovi sfondo con AI Gemini · esporta a WhatsApp</span>
+    </div>
+  </div>
+
+  <!-- ====================================== -->
+  <!-- PHONE 3: DIRECT CHAT                   -->
+  <!-- ====================================== -->
+  <div class="phone-wrapper">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+          </div>
+        </div>
+        <div class="app-bar">
+          <div class="app-bar-left">
+            <i class="fas fa-arrow-left back-icon"></i>
+            <span class="app-bar-title-back">Direct Chat</span>
+          </div>
+          <div class="app-bar-icons">
+            <i class="fas fa-clock-rotate-left"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+          </div>
+        </div>
+        <div class="body">
+          <div class="info-banner">
+            <strong>⚡ Senza salvare contatti</strong><br>
+            Chatta su WhatsApp con qualsiasi numero senza aggiungerlo alla rubrica.
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Numero di telefono</label>
+            <div class="input-row">
+              <div class="country-pick">
+                🇮🇳 +91 <i class="fas fa-chevron-down" style="font-size: 11px;"></i>
+              </div>
+              <input class="text-input" type="text" value="98765 43210" />
+            </div>
+
+            <label class="form-label">Messaggio (opzionale)</label>
+            <textarea class="text-area" placeholder="Ciao! Volevo chiederti...">Hi! How are you?</textarea>
+
+            <button class="btn-primary" style="margin-top: 16px;">
+              <i class="fab fa-whatsapp"></i> Apri in WhatsApp
+            </button>
+          </div>
+
+          <div class="section-header">RECENTI</div>
+          <div class="list-item">
+            <div class="list-item-avatar avatar-blue">+91</div>
+            <div class="list-item-content">
+              <div class="list-item-row">
+                <span class="list-item-title">+91 98765 43210</span>
+                <span class="list-item-time">oggi</span>
+              </div>
+              <span class="list-item-subtitle">Hi! How are you?</span>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-avatar avatar-green">+39</div>
+            <div class="list-item-content">
+              <div class="list-item-row">
+                <span class="list-item-title">+39 351 047 3814</span>
+                <span class="list-item-time">ieri</span>
+              </div>
+              <span class="list-item-subtitle">Ciao, ti volevo chiedere...</span>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-avatar avatar-orange">+92</div>
+            <div class="list-item-content">
+              <div class="list-item-row">
+                <span class="list-item-title">+92 300 1234567</span>
+                <span class="list-item-time">2 gg</span>
+              </div>
+              <span class="list-item-subtitle">Salaam beta!</span>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="bottom-nav-item active">
+            <div class="icon-wrap"><i class="fas fa-toolbox"></i></div>
+            Tools
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-smile"></i></div>
+            Stickers
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-heart"></i></div>
+            Wishes
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-gear"></i></div>
+            Settings
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">
+      <span class="num">3</span><span class="title">Direct Chat</span>
+      <span class="desc">Apri WhatsApp con qualsiasi numero · senza rubrica</span>
+    </div>
+  </div>
+
+  <!-- ====================================== -->
+  <!-- PHONE 4: TEXT FORMATTER                -->
+  <!-- ====================================== -->
+  <div class="phone-wrapper">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+          </div>
+        </div>
+        <div class="app-bar">
+          <div class="app-bar-left">
+            <i class="fas fa-arrow-left back-icon"></i>
+            <span class="app-bar-title-back">Text Tools</span>
+          </div>
+          <div class="app-bar-icons">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+          </div>
+        </div>
+        <div class="chip-row" style="border-bottom: 1px solid var(--wa-divider);">
+          <span class="chip active">✨ Fancy Fonts</span>
+          <span class="chip">🅱️ Format</span>
+          <span class="chip">😀 Emoji Art</span>
+          <span class="chip">🔤 Symbols</span>
+        </div>
+        <div class="body">
+          <div class="form-section" style="padding-bottom: 0;">
+            <label class="form-label">Scrivi il tuo testo</label>
+            <textarea class="text-area" style="min-height: 60px;">Hello WhatsApp</textarea>
+          </div>
+
+          <div class="format-row">
+            <div class="format-btn bold">B</div>
+            <div class="format-btn italic">I</div>
+            <div class="format-btn strike">S̶</div>
+            <div class="format-btn mono">{ }</div>
+          </div>
+
+          <div class="section-header">FANCY FONTS · TAP PER COPIARE</div>
+          <div class="fonts-list">
+            <div class="fonts-list-item">
+              <span style="font-family: 'Brush Script MT', cursive;">𝓗𝓮𝓵𝓵𝓸 𝓦𝓱𝓪𝓽𝓼𝓐𝓹𝓹</span>
+              <span class="copy-btn">COPY</span>
+            </div>
+            <div class="fonts-list-item">
+              <span>𝕳𝖊𝖑𝖑𝖔 𝖂𝖍𝖆𝖙𝖘𝕬𝖕𝖕</span>
+              <span class="copy-btn">COPY</span>
+            </div>
+            <div class="fonts-list-item">
+              <span>🅗🅔🅛🅛🅞 🅦🅗🅐🅣🅢🅐🅟🅟</span>
+              <span class="copy-btn">COPY</span>
+            </div>
+            <div class="fonts-list-item">
+              <span>Ⓗⓔⓛⓛⓞ ⓌⓗⓐⓣⓢⒶⓟⓟ</span>
+              <span class="copy-btn">COPY</span>
+            </div>
+            <div class="fonts-list-item">
+              <span>ℋℯℓℓℴ 𝒲𝒽𝒶𝓉𝓈𝒜𝓅𝓅</span>
+              <span class="copy-btn">COPY</span>
+            </div>
+            <div class="fonts-list-item">
+              <span>🇭 🇪 🇱 🇱 🇴</span>
+              <span class="copy-btn">COPY</span>
+            </div>
+          </div>
+          <div style="padding: 0 16px 16px;">
+            <button class="btn-primary">
+              <i class="fab fa-whatsapp"></i> Condividi su WhatsApp
+            </button>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="bottom-nav-item active">
+            <div class="icon-wrap"><i class="fas fa-toolbox"></i></div>
+            Tools
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-smile"></i></div>
+            Stickers
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-heart"></i></div>
+            Wishes
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-gear"></i></div>
+            Settings
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">
+      <span class="num">4</span><span class="title">Text Formatter</span>
+      <span class="desc">100+ font fancy · grassetto · corsivo · simboli</span>
+    </div>
+  </div>
+
+  <!-- ====================================== -->
+  <!-- PHONE 5: WISHES MAKER                  -->
+  <!-- ====================================== -->
+  <div class="phone-wrapper">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+          </div>
+        </div>
+        <div class="app-bar">
+          <div class="app-bar-left">
+            <i class="fas fa-arrow-left back-icon"></i>
+            <span class="app-bar-title-back">Wishes & Status</span>
+          </div>
+          <div class="app-bar-icons">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+          </div>
+        </div>
+        <div class="chip-row" style="border-bottom: 1px solid var(--wa-divider);">
+          <span class="chip active">🔥 Trending</span>
+          <span class="chip">🎂 Birthday</span>
+          <span class="chip">🌙 Eid</span>
+          <span class="chip">🪔 Diwali</span>
+          <span class="chip">❤️ Love</span>
+          <span class="chip">💍 Shadi</span>
+        </div>
+        <div class="body">
+          <div class="wishes-grid">
+            <div class="wish-card bday">
+              <span class="lang">EN</span>
+              <span class="text">"Happy Birthday! Wishing you a year filled with joy and laughter 🎂"</span>
+              <div class="meta"><span><i class="fas fa-heart"></i> 12K</span><i class="fas fa-share"></i></div>
+            </div>
+            <div class="wish-card eid">
+              <span class="lang">UR</span>
+              <span class="text">"عید مبارک! اللہ آپ کو خوش رکھے 🌙"</span>
+              <div class="meta"><span><i class="fas fa-heart"></i> 45K</span><i class="fas fa-share"></i></div>
+            </div>
+            <div class="wish-card diwali">
+              <span class="lang">HI</span>
+              <span class="text">"दीपावली की हार्दिक शुभकामनाएं 🪔✨"</span>
+              <div class="meta"><span><i class="fas fa-heart"></i> 38K</span><i class="fas fa-share"></i></div>
+            </div>
+            <div class="wish-card love">
+              <span class="lang">EN</span>
+              <span class="text">"Every love story is beautiful, but ours is my favorite ❤️"</span>
+              <div class="meta"><span><i class="fas fa-heart"></i> 89K</span><i class="fas fa-share"></i></div>
+            </div>
+            <div class="wish-card motiv">
+              <span class="lang">EN</span>
+              <span class="text">"Don't wait for opportunity. Create it. 💪"</span>
+              <div class="meta"><span><i class="fas fa-heart"></i> 22K</span><i class="fas fa-share"></i></div>
+            </div>
+            <div class="wish-card shadi">
+              <span class="lang">HI</span>
+              <span class="text">"शादी मुबारक हो ✨ हमेशा खुश रहो"</span>
+              <div class="meta"><span><i class="fas fa-heart"></i> 16K</span><i class="fas fa-share"></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="fab"><i class="fas fa-plus"></i></div>
+        <div class="bottom-nav">
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-toolbox"></i></div>
+            Tools
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-smile"></i></div>
+            Stickers
+          </div>
+          <div class="bottom-nav-item active">
+            <div class="icon-wrap"><i class="fas fa-heart"></i></div>
+            Wishes
+          </div>
+          <div class="bottom-nav-item">
+            <div class="icon-wrap"><i class="fas fa-gear"></i></div>
+            Settings
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">
+      <span class="num">5</span><span class="title">Wishes Maker</span>
+      <span class="desc">Status pronti in EN/HI/UR/IT · share diretto WhatsApp</span>
+    </div>
+  </div>
+
+  <!-- ====================================== -->
+  <!-- PHONE 6: FAKE CHAT GENERATOR           -->
+  <!-- ====================================== -->
+  <div class="phone-wrapper">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar dark">
+          <span>9:41</span>
+          <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+          </div>
+        </div>
+        <div class="chat-header">
+          <i class="fas fa-arrow-left"></i>
+          <div class="chat-avatar">S</div>
+          <div class="chat-info">
+            <div class="chat-name">Sarah ❤️</div>
+            <div class="chat-status">online</div>
+          </div>
+          <div class="chat-icons">
+            <i class="fas fa-video"></i>
+            <i class="fas fa-phone"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+          </div>
+        </div>
+        <div class="chat-body">
+          <div class="bubble received">
+            Hey! Where are you? 🥺
+            <span class="meta">10:23</span>
+          </div>
+          <div class="bubble sent">
+            On my way babe! 5 min
+            <span class="meta">10:24 <i class="fas fa-check-double"></i></span>
+          </div>
+          <div class="bubble received">
+            Okay see you soon ❤️
+            <span class="meta">10:24</span>
+          </div>
+          <div class="bubble sent">
+            Love you so much 😘
+            <span class="meta">10:25 <i class="fas fa-check-double"></i></span>
+          </div>
+          <div class="bubble received">
+            I have a surprise for you 🎁
+            <span class="meta">10:26</span>
+          </div>
+          <div class="bubble sent">
+            Really?? Can't wait! 🤩
+            <span class="meta">10:26 <i class="fas fa-check-double"></i></span>
+          </div>
+          <div style="text-align: center; margin: 12px 0;">
+            <span style="background: rgba(0,0,0,0.05); padding: 4px 12px; border-radius: 8px; font-size: 11px; color: var(--wa-text-secondary);">
+              <i class="fas fa-camera"></i> Tap qui per modificare la chat
+            </span>
+          </div>
+        </div>
+        <div class="chat-input-bar">
+          <div class="chat-input">
+            <i class="fas fa-face-smile"></i>
+            <span>Aggiungi messaggio...</span>
+            <i class="fas fa-paperclip"></i>
+            <i class="fas fa-camera"></i>
+          </div>
+          <div class="chat-send"><i class="fas fa-microphone"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">
+      <span class="num">6</span><span class="title">Fake Chat Generator</span>
+      <span class="desc">UI identica a WhatsApp · per scherzi · screenshot esportabile</span>
+    </div>
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  <p>📁 File: <code>C:\Users\UTENTE\WhatsKit\mockups\index.html</code></p>
+  <p style="margin-top: 8px;">🚀 Pronti per Flutter? Apri questo file nel browser e poi dimmi <strong>"OK procedi"</strong> per creare il progetto Flutter reale!</p>
+  <p style="margin-top: 16px; font-size: 12px; opacity: 0.7;">
+    ⚠️ Nota: il logo finale dell'app deve essere DIVERSO da WhatsApp (regole stores).<br>
+    Useremo "WhatsKit" + icona custom (es. cassetta degli attrezzi verde).
+  </p>
+</footer>
+
+</body>
+</html>
