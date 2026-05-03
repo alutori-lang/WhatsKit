@@ -32,6 +32,9 @@ dependencies:
   # Storage
   shared_preferences: ^2.3.3      # Recenti, preferiti, settings
 
+  # AI / API
+  http: ^1.2.2                    # Chiamate API Gemini
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
