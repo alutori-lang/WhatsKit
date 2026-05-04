@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../theme/app_colors.dart';
 import '../../services/recents_storage.dart';
 
@@ -55,9 +56,10 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
   }
 
   Future<void> _openWhatsApp() async {
+    final s = AppLocalizations.of(context)!;
     final phone = _phoneController.text.trim().replaceAll(RegExp(r'[^0-9]'), '');
     if (phone.isEmpty) {
-      _showError('Inserisci un numero di telefono');
+      _showError(s.dcEnterPhone);
       return;
     }
     final fullNumber = '${_selectedCountry.phoneCode}$phone';
@@ -83,7 +85,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
       ));
       await _loadRecents();
     } else {
-      if (mounted) _showError('WhatsApp non installato sul dispositivo');
+      if (mounted) _showError(s.dcWaNotInstalled);
     }
   }
 
@@ -140,9 +142,10 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
     await RecentsStorage.remove(recent.fullNumber);
     await _loadRecents();
     if (!mounted) return;
+    final s = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${recent.displayNumber} rimosso'),
+        content: Text(s.dcRemovedSnack(recent.displayNumber)),
         backgroundColor: AppColors.textPrimary,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
@@ -151,16 +154,17 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
   }
 
   Future<void> _clearAllRecents() async {
+    final s = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Cancella cronologia'),
-        content: Text('Vuoi davvero cancellare tutti i ${_recents.length} numeri recenti?'),
+        title: Text(s.dcClearAllTitle),
+        content: Text(s.dcClearAllContent(_recents.length)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annulla')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(s.commonCancel)),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Cancella', style: TextStyle(color: Colors.red)),
+            child: Text(s.commonDelete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -173,15 +177,16 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Direct Chat',
-          style: TextStyle(
+        title: Text(
+          s.dcTitle,
+          style: const TextStyle(
             color: AppColors.textPrimary,
             fontSize: 19,
             fontWeight: FontWeight.w500,
@@ -191,7 +196,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
           if (_recents.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.delete_sweep_outlined),
-              tooltip: 'Cancella tutto',
+              tooltip: s.dcClearAllTooltip,
               onPressed: _clearAllRecents,
             ),
         ],
@@ -208,19 +213,19 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
                 left: BorderSide(color: AppColors.waGreen, width: 3),
               ),
             ),
-            child: const Text.rich(
+            child: Text.rich(
               TextSpan(
                 children: [
                   TextSpan(
-                    text: '⚡ Senza salvare contatti\n',
-                    style: TextStyle(
+                    text: '${s.dcInfoTitle}\n',
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: AppColors.waGreenDark,
                     ),
                   ),
                   TextSpan(
-                    text: 'Chatta su WhatsApp con qualsiasi numero senza aggiungerlo alla rubrica.',
-                    style: TextStyle(
+                    text: s.dcInfoDesc,
+                    style: const TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 13,
                       height: 1.4,
@@ -231,9 +236,9 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'NUMERO DI TELEFONO',
-            style: TextStyle(
+          Text(
+            s.dcPhoneLabel,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.textSecondary,
@@ -279,17 +284,17 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
                 child: TextField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    hintText: '98765 43210',
+                  decoration: InputDecoration(
+                    hintText: s.dcPhoneHint,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'MESSAGGIO (OPZIONALE)',
-            style: TextStyle(
+          Text(
+            s.dcMessageLabel,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.textSecondary,
@@ -300,15 +305,15 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
           TextField(
             controller: _messageController,
             maxLines: 4,
-            decoration: const InputDecoration(
-              hintText: 'Ciao! Volevo chiederti...',
+            decoration: InputDecoration(
+              hintText: s.dcMessageHint,
             ),
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: _openWhatsApp,
             icon: const Icon(Icons.chat),
-            label: const Text('Apri in WhatsApp'),
+            label: Text(s.dcOpenInWA),
           ),
           const SizedBox(height: 24),
           if (!_loading) _buildRecentsSection(),
@@ -320,6 +325,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
 
   Widget _buildRecentsSection() {
     if (_recents.isEmpty) return const SizedBox.shrink();
+    final s = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -329,7 +335,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'RECENTI · ${_recents.length}',
+                s.dcRecentsHeader(_recents.length),
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -337,9 +343,9 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
                   letterSpacing: 0.3,
                 ),
               ),
-              const Text(
-                'Tap per riusare · tieni premuto per eliminare',
-                style: TextStyle(
+              Text(
+                s.dcRecentsHint,
+                style: const TextStyle(
                   fontSize: 10,
                   color: AppColors.textSecondary,
                 ),

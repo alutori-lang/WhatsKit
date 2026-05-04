@@ -1,18 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../l10n/generated/app_localizations.dart';
+import '../../main.dart' show localeProvider;
+import '../../services/locale_provider.dart';
 import '../../theme/app_colors.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    localeProvider.addListener(_onLocaleChanged);
+  }
+
+  @override
+  void dispose() {
+    localeProvider.removeListener(_onLocaleChanged);
+    super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
+    final currentLocaleCode = localeProvider.locale?.languageCode ??
+        Localizations.localeOf(context).languageCode;
+    final currentLanguage = LocaleProvider.localeNames[currentLocaleCode] ?? 'English';
+
     return ListView(
       padding: EdgeInsets.zero,
       children: [
         const SizedBox(height: 16),
-        // Header card
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           padding: const EdgeInsets.all(20),
@@ -33,11 +61,11 @@ class SettingsScreen extends StatelessWidget {
                 child: const Icon(Icons.handyman, color: Colors.white, size: 32),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'WhatsKit',
                       style: TextStyle(
                         color: Colors.white,
@@ -46,11 +74,8 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'v1.0.0 · 5 strumenti per WhatsApp',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
+                      s.settingsSubtitle,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ],
                 ),
@@ -60,12 +85,12 @@ class SettingsScreen extends StatelessWidget {
         ),
         const SizedBox(height: 24),
 
-        _section('PREMIUM'),
+        _section(s.settingsPremium),
         _tile(
           icon: Icons.workspace_premium,
           iconColor: const Color(0xFFFFA000),
-          title: 'Passa a Premium',
-          subtitle: 'Rimuovi pubblicità + sticker pack esclusivi',
+          title: s.settingsPassToPremium,
+          subtitle: s.settingsPremiumDesc,
           trailing: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
@@ -77,75 +102,75 @@ class SettingsScreen extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
             ),
           ),
-          onTap: () => _showSnack(context, 'Premium in arrivo!'),
+          onTap: () => _showSnack(context, s.settingsPremiumSoon),
         ),
 
-        _section('GENERALE'),
+        _section(s.settingsGeneral),
         _tile(
           icon: Icons.language,
-          title: 'Lingua',
-          subtitle: 'Italiano',
-          onTap: () => _showSnack(context, 'Multi-lingua in arrivo (EN/HI/UR/IT)'),
+          title: s.settingsLanguage,
+          subtitle: '${LocaleProvider.localeFlags[currentLocaleCode] ?? '🌐'}  $currentLanguage',
+          onTap: _showLanguagePicker,
         ),
         _tile(
           icon: Icons.dark_mode_outlined,
-          title: 'Tema',
-          subtitle: 'Chiaro',
-          onTap: () => _showSnack(context, 'Dark mode in arrivo!'),
+          title: s.settingsTheme,
+          subtitle: s.settingsThemeLight,
+          onTap: () => _showSnack(context, s.settingsThemeDarkSoon),
         ),
         _tile(
           icon: Icons.notifications_outlined,
-          title: 'Notifiche',
-          subtitle: 'Promemoria status compleanni',
-          onTap: () => _showSnack(context, 'Notifiche in arrivo!'),
+          title: s.settingsNotifications,
+          subtitle: s.settingsNotificationsDesc,
+          onTap: () => _showSnack(context, s.settingsNotificationsSoon),
         ),
 
-        _section('CONDIVIDI'),
+        _section(s.settingsShare),
         _tile(
           icon: Icons.share,
           iconColor: AppColors.waGreen,
-          title: 'Consiglia ad un amico',
-          subtitle: 'Condividi WhatsKit',
+          title: s.settingsShareApp,
+          subtitle: s.settingsShareAppDesc,
           onTap: () => _shareApp(),
         ),
         _tile(
           icon: Icons.star_outline,
           iconColor: const Color(0xFFFFA000),
-          title: 'Lascia una recensione',
-          subtitle: 'Supportaci su Play Store',
-          onTap: () => _showSnack(context, 'Disponibile dopo pubblicazione store'),
+          title: s.settingsRate,
+          subtitle: s.settingsRateDesc,
+          onTap: () => _showSnack(context, s.settingsRateSoon),
         ),
 
-        _section('INFO'),
+        _section(s.settingsInfo),
         _tile(
           icon: Icons.privacy_tip_outlined,
-          title: 'Privacy Policy',
-          onTap: () => _showSnack(context, 'In arrivo'),
+          title: s.settingsPrivacy,
+          onTap: () => _showSnack(context, s.settingsComingSoon),
         ),
         _tile(
           icon: Icons.description_outlined,
-          title: 'Termini di servizio',
-          onTap: () => _showSnack(context, 'In arrivo'),
+          title: s.settingsTerms,
+          onTap: () => _showSnack(context, s.settingsComingSoon),
         ),
         _tile(
           icon: Icons.info_outline,
-          title: 'Informazioni',
-          subtitle: 'WhatsKit v1.0.0',
-          onTap: () => _showAbout(context),
+          title: s.settingsAbout,
+          subtitle: s.settingsAboutDesc,
+          onTap: () => _showAbout(context, s),
         ),
 
         Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const Text(
-                'Made with 💚 by alutori',
+              Text(
+                s.settingsMadeWith,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
               const SizedBox(height: 4),
               Text(
-                'WhatsKit non è affiliato con WhatsApp Inc. o Meta',
+                s.settingsDisclaimer,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.7), fontSize: 10),
               ),
@@ -153,6 +178,72 @@ class SettingsScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showLanguagePicker() {
+    final s = AppLocalizations.of(context)!;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.bgPrimary,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.divider,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  s.settingsLanguageDialogTitle,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...LocaleProvider.supportedLocales.map((locale) {
+                final code = locale.languageCode;
+                final name = LocaleProvider.localeNames[code] ?? code;
+                final flag = LocaleProvider.localeFlags[code] ?? '🌐';
+                final selected = (localeProvider.locale?.languageCode ?? 'en') == code;
+                return ListTile(
+                  leading: Text(flag, style: const TextStyle(fontSize: 28)),
+                  title: Text(
+                    name,
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  ),
+                  trailing: selected
+                      ? const Icon(Icons.check_circle, color: AppColors.waGreen)
+                      : null,
+                  onTap: () async {
+                    HapticFeedback.selectionClick();
+                    await localeProvider.setLocale(locale);
+                    if (ctx.mounted) Navigator.pop(ctx);
+                  },
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -214,13 +305,13 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _shareApp() async {
-    final url = Uri.parse('https://github.com/alutori-lang/WhatsKit');
+    final url = Uri.parse('https://github.com/alutori-lang/WHATSAPPTOOLS');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
   }
 
-  void _showAbout(BuildContext context) {
+  void _showAbout(BuildContext context, AppLocalizations s) {
     showAboutDialog(
       context: context,
       applicationName: 'WhatsKit',
@@ -235,18 +326,12 @@ class SettingsScreen extends StatelessWidget {
         alignment: Alignment.center,
         child: const Icon(Icons.handyman, color: Colors.white, size: 28),
       ),
-      children: const [
+      children: [
         Padding(
-          padding: EdgeInsets.only(top: 12),
+          padding: const EdgeInsets.only(top: 12),
           child: Text(
-            'WhatsKit raccoglie 5 strumenti utili per WhatsApp in un\'unica app:\n\n'
-            '• Sticker Maker con AI\n'
-            '• Direct Chat senza salvare numeri\n'
-            '• Text Formatter con 19+ font fancy\n'
-            '• Wishes & Status Maker\n'
-            '• Fake Chat Generator (parody)\n\n'
-            'WhatsKit non è affiliato con WhatsApp Inc. o Meta.',
-            style: TextStyle(fontSize: 13, height: 1.5),
+            s.settingsDisclaimer,
+            style: const TextStyle(fontSize: 13, height: 1.5),
           ),
         ),
       ],

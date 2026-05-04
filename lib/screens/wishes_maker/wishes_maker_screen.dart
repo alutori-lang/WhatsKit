@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../models/wish_card.dart';
 import '../../theme/app_colors.dart';
 import 'wish_detail_screen.dart';
@@ -19,7 +20,8 @@ class _WishesMakerScreenState extends State<WishesMakerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final body = _buildBody();
+    final s = AppLocalizations.of(context)!;
+    final body = _buildBody(s);
     if (widget.embedded) return body;
     return Scaffold(
       appBar: AppBar(
@@ -27,9 +29,9 @@ class _WishesMakerScreenState extends State<WishesMakerScreen> {
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Wishes & Status',
-          style: TextStyle(
+        title: Text(
+          s.wishesTitle,
+          style: const TextStyle(
             color: AppColors.textPrimary,
             fontSize: 19,
             fontWeight: FontWeight.w500,
@@ -43,7 +45,8 @@ class _WishesMakerScreenState extends State<WishesMakerScreen> {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(AppLocalizations s) {
+    final categories = getCategories(s);
     return Column(
         children: [
           Container(
@@ -54,7 +57,7 @@ class _WishesMakerScreenState extends State<WishesMakerScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child: Row(
-                children: kCategories.map((c) {
+                children: categories.map((c) {
                   final isActive = _selectedCategory == c['value'];
                   return GestureDetector(
                     onTap: () => setState(() => _selectedCategory = c['value']!),

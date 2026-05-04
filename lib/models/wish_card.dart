@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/generated/app_localizations.dart';
 import '../theme/app_colors.dart';
 
 class WishCard {
@@ -63,12 +64,12 @@ const kAllWishes = <WishCard>[
   WishCard(id: 'm4', text: '"Every morning is a chance to start fresh 🌅"', lang: 'EN', likes: '11K', gradient: AppColors.gradientGreen, category: 'Motivation'),
 ];
 
-const kCategories = [
-  {'label': '🔥 Trending', 'value': 'Trending'},
-  {'label': '🎂 Birthday', 'value': 'Birthday'},
-  {'label': '🌙 Eid', 'value': 'Eid'},
-  {'label': '🪔 Diwali', 'value': 'Diwali'},
-  {'label': '❤️ Love', 'value': 'Love'},
-  {'label': '💍 Shadi', 'value': 'Shadi'},
-  {'label': '💪 Motivation', 'value': 'Motivation'},
-];
+List<Map<String, String>> getCategories(AppLocalizations s) => [
+      {'label': s.wishCatTrending, 'value': 'Trending'},
+      {'label': s.wishCatBirthday, 'value': 'Birthday'},
+      {'label': s.wishCatEid, 'value': 'Eid'},
+      {'label': s.wishCatDiwali, 'value': 'Diwali'},
+      {'label': s.wishCatLove, 'value': 'Love'},
+      {'label': s.wishCatShadi, 'value': 'Shadi'},
+      {'label': s.wishCatMotivation, 'value': 'Motivation'},
+    ];

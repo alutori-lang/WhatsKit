@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/generated/app_localizations.dart';
 import '../theme/app_colors.dart';
 
 class ToolItem {
@@ -21,50 +22,50 @@ class ToolItem {
   });
 }
 
-const kAllTools = <ToolItem>[
-  ToolItem(
-    id: 'sticker_maker',
-    title: 'Sticker Maker',
-    subtitle: 'Crea sticker da foto · Rimuovi sfondo',
-    emoji: '🎨',
-    gradient: AppColors.gradientPink,
-    badge: 'AI ✨',
-    route: '/sticker',
-  ),
-  ToolItem(
-    id: 'direct_chat',
-    title: 'Direct Chat',
-    subtitle: 'Chatta senza salvare il numero',
-    emoji: '💬',
-    gradient: AppColors.gradientGreen,
-    badge: '⚡',
-    route: '/direct-chat',
-  ),
-  ToolItem(
-    id: 'text_formatter',
-    title: 'Text Formatter',
-    subtitle: '𝓕𝓪𝓷𝓬𝔂 𝓕𝓸𝓷𝓽𝓼 · Bold · Italic',
-    emoji: '✨',
-    gradient: AppColors.gradientPurple,
-    badge: '100+',
-    route: '/text',
-  ),
-  ToolItem(
-    id: 'wishes_maker',
-    title: 'Wishes & Status',
-    subtitle: 'Eid · Diwali · Birthday · Love',
-    emoji: '🎂',
-    gradient: AppColors.gradientOrange,
-    badge: 'NEW',
-    route: '/wishes',
-  ),
-  ToolItem(
-    id: 'fake_chat',
-    title: 'Fake Chat Generator',
-    subtitle: 'Crea chat finte per scherzi',
-    emoji: '😂',
-    gradient: AppColors.gradientBlue,
-    badge: '😆',
-    route: '/fake-chat',
-  ),
-];
+List<ToolItem> getAllTools(AppLocalizations s) => [
+      ToolItem(
+        id: 'sticker_maker',
+        title: s.toolStickerMaker,
+        subtitle: s.toolStickerMakerDesc,
+        emoji: '🎨',
+        gradient: AppColors.gradientPink,
+        badge: s.toolStickerMakerBadge,
+        route: '/sticker',
+      ),
+      ToolItem(
+        id: 'direct_chat',
+        title: s.toolDirectChat,
+        subtitle: s.toolDirectChatDesc,
+        emoji: '💬',
+        gradient: AppColors.gradientGreen,
+        badge: s.toolDirectChatBadge,
+        route: '/direct-chat',
+      ),
+      ToolItem(
+        id: 'text_formatter',
+        title: s.toolTextFormatter,
+        subtitle: s.toolTextFormatterDesc,
+        emoji: '✨',
+        gradient: AppColors.gradientPurple,
+        badge: s.toolTextFormatterBadge,
+        route: '/text',
+      ),
+      ToolItem(
+        id: 'wishes_maker',
+        title: s.toolWishesMaker,
+        subtitle: s.toolWishesMakerDesc,
+        emoji: '🎂',
+        gradient: AppColors.gradientOrange,
+        badge: s.toolWishesMakerBadge,
+        route: '/wishes',
+      ),
+      ToolItem(
+        id: 'fake_chat',
+        title: s.toolFakeChat,
+        subtitle: s.toolFakeChatDesc,
+        emoji: '😂',
+        gradient: AppColors.gradientBlue,
+        badge: s.toolFakeChatBadge,
+        route: '/fake-chat',
+      ),
+    ];

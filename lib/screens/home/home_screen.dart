@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../models/tool_item.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/tool_list_item.dart';
@@ -19,9 +20,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
+    final titles = [s.appName, s.toolStickerMaker, s.wishesTitle, s.settingsTitle];
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titles[_currentIndex]),
+        title: Text(titles[_currentIndex]),
         actions: _currentIndex == 0
             ? [
                 IconButton(icon: const Icon(Icons.search), onPressed: () {}),
@@ -50,17 +53,15 @@ class _HomeScreenState extends State<HomeScreen> {
           HapticFeedback.selectionClick();
           setState(() => _currentIndex = i);
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.handyman_outlined), activeIcon: Icon(Icons.handyman), label: 'Tools'),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_emotions_outlined), activeIcon: Icon(Icons.emoji_emotions), label: 'Stickers'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_outline), activeIcon: Icon(Icons.favorite), label: 'Wishes'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), activeIcon: Icon(Icons.settings), label: 'Settings'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.handyman_outlined), activeIcon: const Icon(Icons.handyman), label: s.tabTools),
+          BottomNavigationBarItem(icon: const Icon(Icons.emoji_emotions_outlined), activeIcon: const Icon(Icons.emoji_emotions), label: s.tabStickers),
+          BottomNavigationBarItem(icon: const Icon(Icons.favorite_outline), activeIcon: const Icon(Icons.favorite), label: s.tabWishes),
+          BottomNavigationBarItem(icon: const Icon(Icons.settings_outlined), activeIcon: const Icon(Icons.settings), label: s.tabSettings),
         ],
       ),
     );
   }
-
-  static const _titles = ['WhatsKit', 'Sticker Maker', 'Wishes & Status', 'Impostazioni'];
 }
 
 class _ToolsTab extends StatelessWidget {
@@ -68,22 +69,24 @@ class _ToolsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
+    final tools = getAllTools(s);
     return Column(
       children: [
-        _buildSearchBar(),
+        _buildSearchBar(s),
         Expanded(
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              _buildSectionHeader('STRUMENTI WHATSAPP'),
-              ...kAllTools.map((tool) => ToolListItem(
+              _buildSectionHeader(s.toolsHeader),
+              ...tools.map((tool) => ToolListItem(
                     tool: tool,
                     onTap: () {
                       HapticFeedback.selectionClick();
                       Navigator.of(context).pushNamed(tool.route);
                     },
                   )),
-              _buildPremiumBanner(),
+              _buildPremiumBanner(s),
               const SizedBox(height: 80),
             ],
           ),
@@ -92,7 +95,7 @@ class _ToolsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(AppLocalizations s) {
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -100,13 +103,13 @@ class _ToolsTab extends StatelessWidget {
         color: AppColors.bgPage,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.search, color: AppColors.textSecondary, size: 20),
-          SizedBox(width: 12),
+          const Icon(Icons.search, color: AppColors.textSecondary, size: 20),
+          const SizedBox(width: 12),
           Text(
-            'Cerca strumenti...',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+            s.searchTools,
+            style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
         ],
       ),
@@ -128,7 +131,7 @@ class _ToolsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildPremiumBanner() {
+  Widget _buildPremiumBanner(AppLocalizations s) {
     return Container(
       margin: const EdgeInsets.all(12),
       padding: const EdgeInsets.all(14),
@@ -139,19 +142,19 @@ class _ToolsTab extends StatelessWidget {
           left: BorderSide(color: AppColors.waGreen, width: 3),
         ),
       ),
-      child: const Text.rich(
+      child: Text.rich(
         TextSpan(
           children: [
             TextSpan(
-              text: '💎 Premium',
-              style: TextStyle(
+              text: s.premiumBadge,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: AppColors.waGreenDark,
               ),
             ),
             TextSpan(
-              text: ' · Rimuovi pubblicità + sticker pack esclusivi · €2.99',
-              style: TextStyle(
+              text: s.premiumDesc,
+              style: const TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 13,
               ),
