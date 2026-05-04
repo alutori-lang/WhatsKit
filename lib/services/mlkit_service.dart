@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mlkit_subject_segmentation/google_mlkit_subject_segmentation.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
@@ -26,7 +27,30 @@ class MLKitService {
 
     try {
       debugPrint('[MLKit] Running segmentation on: $resizedPath');
-      final result = await segmenter.processImage(inputImage);
+      late final dynamic result;
+      try {
+        result = await segmenter.processImage(inputImage);
+      } on PlatformException catch (e) {
+        debugPrint('[MLKit] PlatformException: ${e.code} - ${e.message}');
+        // Common error codes:
+        // - subject_segmentation_optional_module_not_found
+        // - SUBJECT_SEGMENTATION_OPTIONAL_MODULE_NOT_FOUND
+        // - The model is downloaded async via Google Play Services
+        final code = e.code.toLowerCase();
+        if (code.contains('module_not_found') ||
+            code.contains('not_downloaded') ||
+            code.contains('not_available')) {
+          throw Exception(
+              'Modello AI non ancora pronto.\n\n'
+              'Sta scaricando in background (~12MB). '
+              'Aspetta 30-60 secondi e riprova.\n\n'
+              'Se il problema persiste:\n'
+              '1. Verifica connessione internet\n'
+              '2. Aggiorna Google Play Services\n'
+              '3. Riavvia l\'app');
+        }
+        rethrow;
+      }
 
       final mask = result.foregroundConfidenceMask;
       if (mask == null || mask.isEmpty) {
