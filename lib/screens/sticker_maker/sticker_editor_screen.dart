@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../theme/app_colors.dart';
 import '../../services/mlkit_service.dart';
+import '../../services/remove_bg_service.dart';
+import '../../services/sticker_formatter.dart';
 import '../../services/sticker_storage.dart';
 
 class StickerEditorScreen extends StatefulWidget {
@@ -25,6 +28,7 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
   bool _stickerMode = true;
   bool _whiteOutline = true;
   String? _error;
+  String _processingStatus = '';
   late final bool _isExisting;
 
   @override
@@ -54,19 +58,51 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
     setState(() {
       _processing = true;
       _error = null;
+      _processingStatus = 'Rimozione sfondo...';
     });
 
     try {
-      final result = await MLKitService.removeBackground(
-        widget.imagePath!,
-        stickerMode: _stickerMode,
-        whiteOutline: _whiteOutline,
-      );
+      // 1. Get raw cutout: try remove.bg first (best quality), fallback to ML Kit
+      Uint8List rawCutout;
+      String usedMethod;
+
+      if (RemoveBgService.hasApiKey) {
+        try {
+          setState(() => _processingStatus = '✨ Remove.bg AI (qualità top)...');
+          rawCutout = await RemoveBgService.removeBackground(widget.imagePath!);
+          usedMethod = 'remove.bg';
+        } catch (e) {
+          debugPrint('[Editor] remove.bg failed, fallback to ML Kit: $e');
+          setState(() => _processingStatus = 'remove.bg fallita, uso AI offline...');
+          rawCutout = await MLKitService.removeBackground(widget.imagePath!);
+          usedMethod = 'ML Kit (fallback)';
+        }
+      } else {
+        setState(() => _processingStatus = 'AI offline (ML Kit)...');
+        rawCutout = await MLKitService.removeBackground(widget.imagePath!);
+        usedMethod = 'ML Kit';
+      }
+
+      debugPrint('[Editor] Cutout via $usedMethod, ${rawCutout.length} bytes');
+
+      // 2. Apply sticker formatting (white outline + 512x512 canvas)
+      Uint8List finalBytes;
+      if (_stickerMode) {
+        setState(() => _processingStatus = 'Formattazione sticker...');
+        finalBytes = StickerFormatter.formatAsSticker(
+          rawCutout,
+          whiteOutline: _whiteOutline,
+        );
+      } else {
+        finalBytes = rawCutout;
+      }
+
       setState(() {
-        _processedBytes = result;
+        _processedBytes = finalBytes;
         _processing = false;
         _saved = false;
       });
+      debugPrint('[Editor] Final method used: $usedMethod');
     } catch (e) {
       setState(() {
         _processing = false;
@@ -296,10 +332,12 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Sto rimuovendo lo sfondo dalla tua foto.\nPuò richiedere 5-15 secondi.',
+          Text(
+            _processingStatus.isEmpty
+                ? 'Sto rimuovendo lo sfondo...'
+                : _processingStatus,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
               height: 1.4,
