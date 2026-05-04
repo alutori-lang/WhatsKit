@@ -34,16 +34,12 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
     super.dispose();
   }
 
-  Future<void> _addMessage({bool? isSent}) async {
+  Future<void> _addMessage({bool isSent = true}) async {
     final result = await showModalBottomSheet<dynamic>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => AddMessageSheet(
-        existing: isSent != null
-            ? FakeMessage(id: '', text: '', isSent: isSent, time: '')
-            : null,
-      ),
+      builder: (_) => AddMessageSheet(defaultIsSent: isSent),
     );
     if (result is FakeMessage && result.text.isNotEmpty) {
       setState(() => _chat.messages.add(result));

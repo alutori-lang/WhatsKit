@@ -4,7 +4,12 @@ import '../../../theme/app_colors.dart';
 
 class AddMessageSheet extends StatefulWidget {
   final FakeMessage? existing;
-  const AddMessageSheet({super.key, this.existing});
+  final bool defaultIsSent;
+  const AddMessageSheet({
+    super.key,
+    this.existing,
+    this.defaultIsSent = true,
+  });
 
   @override
   State<AddMessageSheet> createState() => _AddMessageSheetState();
@@ -24,7 +29,7 @@ class _AddMessageSheetState extends State<AddMessageSheet> {
     _timeController = TextEditingController(
       text: m?.time ?? _now(),
     );
-    _isSent = m?.isSent ?? true;
+    _isSent = m?.isSent ?? widget.defaultIsSent;
     _status = m?.status ?? ReadStatus.read;
   }
 
