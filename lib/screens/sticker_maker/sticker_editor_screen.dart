@@ -22,7 +22,8 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
   Uint8List? _processedBytes;
   bool _processing = false;
   bool _saved = false;
-  bool _autoCrop = false;
+  bool _stickerMode = true;
+  bool _whiteOutline = true;
   String? _error;
   late final bool _isExisting;
 
@@ -58,7 +59,8 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
     try {
       final result = await MLKitService.removeBackground(
         widget.imagePath!,
-        autoCrop: _autoCrop,
+        stickerMode: _stickerMode,
+        whiteOutline: _whiteOutline,
       );
       setState(() {
         _processedBytes = result;
@@ -398,32 +400,37 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Crop toggle (only show before processing or in result state without saving)
-          if (!_isExisting && !_processing && _error == null)
+          // Sticker options (only show before processing or in result state without saving)
+          if (!_isExisting && !_processing && _error == null) ...[
             Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              margin: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
               decoration: BoxDecoration(
                 color: AppColors.bgPage,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.crop, size: 18, color: AppColors.textSecondary),
+                  const Icon(Icons.style, size: 18, color: AppColors.textSecondary),
                   const SizedBox(width: 8),
                   const Expanded(
-                    child: Text(
-                      'Ritaglia attorno al soggetto',
-                      style: TextStyle(fontSize: 13),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Modalità Sticker (512x512)',
+                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                        Text('Centra il soggetto · formato WhatsApp',
+                            style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                      ],
                     ),
                   ),
                   Switch(
-                    value: _autoCrop,
+                    value: _stickerMode,
                     activeThumbColor: AppColors.waGreen,
                     onChanged: (v) {
                       setState(() {
-                        _autoCrop = v;
-                        // Clear processed result so user reprocesses with new option
+                        _stickerMode = v;
                         if (_processedBytes != null && !_saved) {
                           _processedBytes = null;
                         }
@@ -433,6 +440,40 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
                 ],
               ),
             ),
+            if (_stickerMode)
+              Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                decoration: BoxDecoration(
+                  color: AppColors.bgPage,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.border_style, size: 18, color: AppColors.textSecondary),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Bordo bianco (look sticker)',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                    ),
+                    Switch(
+                      value: _whiteOutline,
+                      activeThumbColor: AppColors.waGreen,
+                      onChanged: (v) {
+                        setState(() {
+                          _whiteOutline = v;
+                          if (_processedBytes != null && !_saved) {
+                            _processedBytes = null;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+          ],
           Row(
             children: [
               if (_processedBytes != null && !_isExisting && !_saved) ...[

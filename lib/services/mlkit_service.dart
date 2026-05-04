@@ -6,16 +6,17 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
 class MLKitService {
-  /// Removes the background from an image using on-device ML Kit Subject Segmentation.
-  /// Free, offline, no API key required.
+  /// Removes the background and turns the image into a proper WhatsApp sticker.
   ///
-  /// [autoCrop]: if true, crops to the bounding box of the subject. If false,
-  /// keeps original image dimensions with transparent background.
+  /// [stickerMode]: if true (default), produces a 512x512 sticker with white outline,
+  /// centered on transparent canvas (real sticker look).
+  /// If false, returns just the cutout with original dimensions (raw cutout).
   static Future<Uint8List> removeBackground(
     String imagePath, {
-    bool autoCrop = false,
+    bool stickerMode = true,
+    bool whiteOutline = true,
   }) async {
-    // 1. Resize to manageable size (faster + less memory)
+    // 1. Resize input
     final resizedPath = await _resizeImage(imagePath);
 
     // 2. Run ML Kit segmentation
@@ -32,12 +33,12 @@ class MLKitService {
     );
 
     try {
-      debugPrint('[MLKit] Running segmentation on: $resizedPath');
+      debugPrint('[MLKit] Segmenting: $resizedPath');
       late final SubjectSegmentationResult result;
       try {
         result = await segmenter.processImage(inputImage);
       } on PlatformException catch (e) {
-        debugPrint('[MLKit] PlatformException: ${e.code} - ${e.message}');
+        debugPrint('[MLKit] PlatformException: ${e.code}');
         final code = e.code.toLowerCase();
         if (code.contains('module_not_found') ||
             code.contains('not_downloaded') ||
@@ -45,8 +46,8 @@ class MLKitService {
           throw Exception('Modello AI non ancora pronto.\n\n'
               'Sta scaricando in background (~12MB). '
               'Aspetta 30-60 secondi e riprova.\n\n'
-              'Se il problema persiste:\n'
-              '1. Verifica connessione internet\n'
+              'Se persiste:\n'
+              '1. Verifica internet\n'
               '2. Aggiorna Google Play Services\n'
               '3. Riavvia l\'app');
         }
@@ -56,10 +57,9 @@ class MLKitService {
       final mask = result.foregroundConfidenceMask;
       if (mask == null || mask.isEmpty) {
         throw Exception(
-            'Nessun soggetto rilevato. Prova con una foto in cui il soggetto è ben visibile e illuminato.');
+            'Nessun soggetto rilevato. Prova con una foto in cui il soggetto è ben visibile.');
       }
 
-      // 3. Load resized image and apply mask
       final originalBytes = await File(resizedPath).readAsBytes();
       final original = img.decodeImage(originalBytes);
       if (original == null) {
@@ -68,55 +68,79 @@ class MLKitService {
 
       final w = original.width;
       final h = original.height;
-      debugPrint('[MLKit] Image: ${w}x$h, mask length: ${mask.length}');
-
       if (mask.length != w * h) {
-        throw Exception(
-            'Dimensioni mask incompatibili: ${mask.length} vs ${w * h}.');
+        throw Exception('Mask incompatibile (${mask.length} vs ${w * h}).');
       }
 
-      // 4. Build output PNG with smooth alpha from mask
-      // Using SOFT mapping: full mask value 0..1 → alpha 0..255
-      // (no hard threshold, smoother edges)
-      final output = img.Image(width: w, height: h, numChannels: 4);
+      // 3. Apply mask with sharp-ish edges (sticker-style)
+      // Hard threshold near edges for crisp cutout
+      final cutout = img.Image(width: w, height: h, numChannels: 4);
       int strongFgCount = 0;
       for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-          final idx = y * w + x;
-          final confidence = mask[idx];
-          if (confidence > 0.95) strongFgCount++;
-          // Soft alpha: keep full color, modulate alpha by confidence
-          // Apply a slight curve to make edges sharper but still smooth
-          double alpha = confidence;
-          if (alpha < 0.05) {
-            alpha = 0.0;
-          } else if (alpha > 0.95) {
-            alpha = 1.0;
+          final c = mask[y * w + x];
+          if (c > 0.95) strongFgCount++;
+          // Sticker-style alpha: sharper edges
+          int alphaByte;
+          if (c < 0.4) {
+            alphaByte = 0;
+          } else if (c > 0.7) {
+            alphaByte = 255;
           } else {
-            // Smoothstep curve for natural transitions
-            alpha = alpha * alpha * (3.0 - 2.0 * alpha);
+            // Linear ramp 0.4-0.7 → 0-255 for thin antialiased edge
+            alphaByte = (((c - 0.4) / 0.3) * 255).round().clamp(0, 255);
           }
-          final alphaByte = (alpha * 255).toInt();
           if (alphaByte > 0) {
             final p = original.getPixel(x, y);
-            output.setPixelRgba(x, y, p.r.toInt(), p.g.toInt(), p.b.toInt(), alphaByte);
+            cutout.setPixelRgba(
+                x, y, p.r.toInt(), p.g.toInt(), p.b.toInt(), alphaByte);
           } else {
-            output.setPixelRgba(x, y, 0, 0, 0, 0);
+            cutout.setPixelRgba(x, y, 0, 0, 0, 0);
           }
         }
       }
 
       if (strongFgCount < 100) {
         throw Exception(
-            'Soggetto troppo piccolo. Prova con una foto dove il soggetto occupa più spazio.');
+            'Soggetto troppo piccolo. Riprova con foto dove il soggetto è ben visibile.');
       }
 
-      debugPrint('[MLKit] Strong fg pixels: $strongFgCount / ${w * h}');
+      if (!stickerMode) {
+        return Uint8List.fromList(img.encodePng(cutout));
+      }
 
-      // 5. Optional crop to bounding box
-      final finalImage = autoCrop ? _cropToForeground(output) : output;
+      // 4. Crop to bounding box (tight)
+      final cropped = _cropTight(cutout);
 
-      return Uint8List.fromList(img.encodePng(finalImage));
+      // 5. Fit cropped subject into a max box leaving room for outline+padding
+      final stickerSize = 512;
+      final outlinePx = whiteOutline ? 12 : 0;
+      final padding = 8;
+      final maxSubjectSize = stickerSize - 2 * (outlinePx + padding); // e.g. 472
+
+      img.Image scaled = cropped;
+      if (cropped.width > maxSubjectSize || cropped.height > maxSubjectSize) {
+        if (cropped.width >= cropped.height) {
+          scaled = img.copyResize(cropped, width: maxSubjectSize, interpolation: img.Interpolation.cubic);
+        } else {
+          scaled = img.copyResize(cropped, height: maxSubjectSize, interpolation: img.Interpolation.cubic);
+        }
+      }
+
+      // 6. Add white outline if requested
+      img.Image withOutline = scaled;
+      if (whiteOutline) {
+        withOutline = _addWhiteOutline(scaled, strokeWidth: outlinePx);
+      }
+
+      // 7. Center on 512x512 transparent canvas
+      final canvas = img.Image(width: stickerSize, height: stickerSize, numChannels: 4);
+      img.fill(canvas, color: img.ColorRgba8(0, 0, 0, 0));
+      final dx = (stickerSize - withOutline.width) ~/ 2;
+      final dy = (stickerSize - withOutline.height) ~/ 2;
+      img.compositeImage(canvas, withOutline, dstX: dx, dstY: dy);
+
+      return Uint8List.fromList(img.encodePng(canvas));
     } finally {
       await segmenter.close();
     }
@@ -147,19 +171,17 @@ class MLKitService {
     return tempPath;
   }
 
-  /// Find bounding box of non-transparent pixels and crop with 10% padding.
-  static img.Image _cropToForeground(img.Image image) {
+  /// Find tight bounding box and crop (no padding).
+  static img.Image _cropTight(img.Image image) {
     int minX = image.width;
     int minY = image.height;
     int maxX = 0;
     int maxY = 0;
 
-    // Use higher alpha threshold for crop bounds (avoids cropping too tight on feathered edges)
-    const cropThreshold = 80;
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
         final p = image.getPixel(x, y);
-        if (p.a > cropThreshold) {
+        if (p.a > 80) {
           if (x < minX) minX = x;
           if (y < minY) minY = y;
           if (x > maxX) maxX = x;
@@ -170,20 +192,96 @@ class MLKitService {
 
     if (minX >= maxX || minY >= maxY) return image;
 
-    // 10% padding around the subject
-    final padX = ((maxX - minX) * 0.10).round();
-    final padY = ((maxY - minY) * 0.10).round();
-    minX = (minX - padX).clamp(0, image.width).toInt();
-    minY = (minY - padY).clamp(0, image.height).toInt();
-    maxX = (maxX + padX).clamp(0, image.width).toInt();
-    maxY = (maxY + padY).clamp(0, image.height).toInt();
-
     return img.copyCrop(
       image,
       x: minX,
       y: minY,
-      width: maxX - minX,
-      height: maxY - minY,
+      width: maxX - minX + 1,
+      height: maxY - minY + 1,
     );
+  }
+
+  /// Add white outline (sticker-style) around the foreground subject.
+  /// Uses morphological dilation: each transparent pixel within strokeWidth
+  /// of a foreground pixel becomes white opaque.
+  static img.Image _addWhiteOutline(img.Image input, {required int strokeWidth}) {
+    final w = input.width;
+    final h = input.height;
+    // New canvas larger by 2*strokeWidth on each side to fit the outline
+    final ow = w + 2 * strokeWidth;
+    final oh = h + 2 * strokeWidth;
+    final output = img.Image(width: ow, height: oh, numChannels: 4);
+    img.fill(output, color: img.ColorRgba8(0, 0, 0, 0));
+
+    // Pre-compute alpha grid for input (offset by strokeWidth in output coords)
+    // For each output pixel, check if any input pixel within stroke radius
+    // is foreground.
+    final radiusSq = strokeWidth * strokeWidth;
+
+    for (int y = 0; y < oh; y++) {
+      for (int x = 0; x < ow; x++) {
+        // Coordinates in input image (offset by strokeWidth)
+        final ix = x - strokeWidth;
+        final iy = y - strokeWidth;
+
+        // First check: if this pixel itself is in input bounds, get its alpha
+        int selfAlpha = 0;
+        if (ix >= 0 && ix < w && iy >= 0 && iy < h) {
+          selfAlpha = input.getPixel(ix, iy).a.toInt();
+        }
+
+        if (selfAlpha > 80) {
+          // Foreground pixel: copy from input
+          final p = input.getPixel(ix, iy);
+          output.setPixelRgba(
+              x, y, p.r.toInt(), p.g.toInt(), p.b.toInt(), p.a.toInt());
+          continue;
+        }
+
+        // Otherwise check if within stroke radius of any foreground pixel
+        bool nearFg = false;
+        // Limit search to circle around (ix, iy)
+        final yMin = (iy - strokeWidth).clamp(0, h - 1).toInt();
+        final yMax = (iy + strokeWidth).clamp(0, h - 1).toInt();
+        for (int yy = yMin; yy <= yMax && !nearFg; yy++) {
+          final dy = yy - iy;
+          final remSq = radiusSq - dy * dy;
+          if (remSq < 0) continue;
+          final dxMax = _isqrt(remSq);
+          final xMin = (ix - dxMax).clamp(0, w - 1).toInt();
+          final xMax = (ix + dxMax).clamp(0, w - 1).toInt();
+          for (int xx = xMin; xx <= xMax; xx++) {
+            if (input.getPixel(xx, yy).a > 80) {
+              nearFg = true;
+              break;
+            }
+          }
+        }
+
+        if (nearFg) {
+          // White outline pixel
+          output.setPixelRgba(x, y, 255, 255, 255, 255);
+        } else if (selfAlpha > 0) {
+          // Antialiased edge of original, but no near foreground (rare)
+          final p = input.getPixel(ix, iy);
+          output.setPixelRgba(
+              x, y, p.r.toInt(), p.g.toInt(), p.b.toInt(), p.a.toInt());
+        }
+      }
+    }
+
+    return output;
+  }
+
+  /// Integer square root for circular dilation.
+  static int _isqrt(int n) {
+    if (n < 2) return n;
+    int x = n;
+    int y = (x + 1) >> 1;
+    while (y < x) {
+      x = y;
+      y = (x + n ~/ x) >> 1;
+    }
+    return x;
   }
 }
