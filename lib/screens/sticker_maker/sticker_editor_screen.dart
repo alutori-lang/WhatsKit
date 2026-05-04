@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../theme/app_colors.dart';
-import '../../services/gemini_service.dart';
+import '../../services/mlkit_service.dart';
 import '../../services/sticker_storage.dart';
 
 class StickerEditorScreen extends StatefulWidget {
@@ -47,7 +47,7 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
   }
 
   Future<void> _removeBackground() async {
-    if (_originalBytes == null) return;
+    if (widget.imagePath == null) return;
 
     setState(() {
       _processing = true;
@@ -55,7 +55,7 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
     });
 
     try {
-      final result = await GeminiService.removeBackground(_originalBytes!);
+      final result = await MLKitService.removeBackground(widget.imagePath!);
       setState(() {
         _processedBytes = result;
         _processing = false;
@@ -305,7 +305,7 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
 
   Widget _buildErrorState() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.bgPrimary,
         borderRadius: BorderRadius.circular(16),
@@ -313,31 +313,70 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, color: Colors.red, size: 60),
-          const SizedBox(height: 16),
+          const Icon(Icons.error_outline, color: Colors.red, size: 50),
+          const SizedBox(height: 12),
           const Text(
             'Ops! Qualcosa è andato storto',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            _error ?? 'Errore sconosciuto',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-              height: 1.4,
+          const SizedBox(height: 12),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF3F3),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red.shade100),
+                ),
+                child: SelectableText(
+                  _error ?? 'Errore sconosciuto',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textPrimary,
+                    height: 1.4,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 20),
-          ElevatedButton.icon(
-            onPressed: _removeBackground,
-            icon: const Icon(Icons.refresh),
-            label: const Text('Riprova'),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: _error ?? ''));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Errore copiato'),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.copy, size: 16),
+                  label: const Text('Copia errore'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton.icon(
+                  onPressed: _removeBackground,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Riprova'),
+                ),
+              ),
+            ],
           ),
         ],
       ),

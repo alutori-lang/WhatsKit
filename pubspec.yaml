@@ -37,6 +37,7 @@ dependencies:
 
   # AI / API
   http: ^1.2.2                    # Chiamate API Gemini
+  google_mlkit_subject_segmentation: ^0.0.3  # On-device background removal
 
 dev_dependencies:
   flutter_test:
