@@ -22,6 +22,7 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
   Uint8List? _processedBytes;
   bool _processing = false;
   bool _saved = false;
+  bool _autoCrop = false;
   String? _error;
   late final bool _isExisting;
 
@@ -55,10 +56,14 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
     });
 
     try {
-      final result = await MLKitService.removeBackground(widget.imagePath!);
+      final result = await MLKitService.removeBackground(
+        widget.imagePath!,
+        autoCrop: _autoCrop,
+      );
       setState(() {
         _processedBytes = result;
         _processing = false;
+        _saved = false;
       });
     } catch (e) {
       setState(() {
@@ -390,55 +395,95 @@ class _StickerEditorScreenState extends State<StickerEditorScreen> {
         color: AppColors.bgPrimary,
         border: Border(top: BorderSide(color: AppColors.divider)),
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          if (_processedBytes != null && !_isExisting && !_saved) ...[
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _processedBytes = null;
-                    _error = null;
-                  });
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.textPrimary,
-                  side: const BorderSide(color: AppColors.divider),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          // Crop toggle (only show before processing or in result state without saving)
+          if (!_isExisting && !_processing && _error == null)
+            Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.bgPage,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.crop, size: 18, color: AppColors.textSecondary),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Ritaglia attorno al soggetto',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ),
+                  Switch(
+                    value: _autoCrop,
+                    activeThumbColor: AppColors.waGreen,
+                    onChanged: (v) {
+                      setState(() {
+                        _autoCrop = v;
+                        // Clear processed result so user reprocesses with new option
+                        if (_processedBytes != null && !_saved) {
+                          _processedBytes = null;
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          Row(
+            children: [
+              if (_processedBytes != null && !_isExisting && !_saved) ...[
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _processedBytes = null;
+                        _error = null;
+                      });
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.divider),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                    ),
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: const Text('Rifai'),
+                  ),
                 ),
-                icon: const Icon(Icons.refresh, size: 18),
-                label: const Text('Riprova'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              flex: 2,
-              child: ElevatedButton.icon(
-                onPressed: _saveSticker,
-                icon: const Icon(Icons.save_alt),
-                label: const Text('Salva sticker'),
-              ),
-            ),
-          ] else if (_processedBytes != null) ...[
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _shareSticker,
-                icon: const Icon(Icons.share),
-                label: const Text('Condividi su WhatsApp'),
-              ),
-            ),
-          ] else if (_originalBytes != null && !_processing) ...[
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _removeBackground,
-                icon: const Icon(Icons.auto_fix_high),
-                label: const Text('Rimuovi sfondo AI'),
-              ),
-            ),
-          ] else ...[
-            const SizedBox(height: 50),
-          ],
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton.icon(
+                    onPressed: _saveSticker,
+                    icon: const Icon(Icons.save_alt),
+                    label: const Text('Salva sticker'),
+                  ),
+                ),
+              ] else if (_processedBytes != null) ...[
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _shareSticker,
+                    icon: const Icon(Icons.share),
+                    label: const Text('Condividi su WhatsApp'),
+                  ),
+                ),
+              ] else if (_originalBytes != null && !_processing) ...[
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _removeBackground,
+                    icon: const Icon(Icons.auto_fix_high),
+                    label: const Text('Rimuovi sfondo AI'),
+                  ),
+                ),
+              ] else ...[
+                const SizedBox(height: 50),
+              ],
+            ],
+          ),
         ],
       ),
     );

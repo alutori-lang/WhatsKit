@@ -8,7 +8,13 @@ import 'package:path_provider/path_provider.dart';
 class MLKitService {
   /// Removes the background from an image using on-device ML Kit Subject Segmentation.
   /// Free, offline, no API key required.
-  static Future<Uint8List> removeBackground(String imagePath) async {
+  ///
+  /// [autoCrop]: if true, crops to the bounding box of the subject. If false,
+  /// keeps original image dimensions with transparent background.
+  static Future<Uint8List> removeBackground(
+    String imagePath, {
+    bool autoCrop = false,
+  }) async {
     // 1. Resize to manageable size (faster + less memory)
     final resizedPath = await _resizeImage(imagePath);
 
@@ -27,21 +33,16 @@ class MLKitService {
 
     try {
       debugPrint('[MLKit] Running segmentation on: $resizedPath');
-      late final dynamic result;
+      late final SubjectSegmentationResult result;
       try {
         result = await segmenter.processImage(inputImage);
       } on PlatformException catch (e) {
         debugPrint('[MLKit] PlatformException: ${e.code} - ${e.message}');
-        // Common error codes:
-        // - subject_segmentation_optional_module_not_found
-        // - SUBJECT_SEGMENTATION_OPTIONAL_MODULE_NOT_FOUND
-        // - The model is downloaded async via Google Play Services
         final code = e.code.toLowerCase();
         if (code.contains('module_not_found') ||
             code.contains('not_downloaded') ||
             code.contains('not_available')) {
-          throw Exception(
-              'Modello AI non ancora pronto.\n\n'
+          throw Exception('Modello AI non ancora pronto.\n\n'
               'Sta scaricando in background (~12MB). '
               'Aspetta 30-60 secondi e riprova.\n\n'
               'Se il problema persiste:\n'
@@ -67,52 +68,55 @@ class MLKitService {
 
       final w = original.width;
       final h = original.height;
-      debugPrint('[MLKit] Image: ${w}x$h, mask length: ${mask.length} (expected ${w * h})');
+      debugPrint('[MLKit] Image: ${w}x$h, mask length: ${mask.length}');
 
-      // Verify mask dimensions
       if (mask.length != w * h) {
         throw Exception(
             'Dimensioni mask incompatibili: ${mask.length} vs ${w * h}.');
       }
 
-      // 4. Build output PNG with alpha channel from mask
+      // 4. Build output PNG with smooth alpha from mask
+      // Using SOFT mapping: full mask value 0..1 → alpha 0..255
+      // (no hard threshold, smoother edges)
       final output = img.Image(width: w, height: h, numChannels: 4);
-      int foregroundCount = 0;
+      int strongFgCount = 0;
       for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
           final idx = y * w + x;
           final confidence = mask[idx];
-          final alpha = (confidence * 255).clamp(0, 255).toInt();
-          if (alpha > 30) {
-            // Foreground pixel: copy color, apply confidence as alpha
-            final p = original.getPixel(x, y);
-            output.setPixelRgba(
-              x,
-              y,
-              p.r.toInt(),
-              p.g.toInt(),
-              p.b.toInt(),
-              alpha,
-            );
-            foregroundCount++;
+          if (confidence > 0.95) strongFgCount++;
+          // Soft alpha: keep full color, modulate alpha by confidence
+          // Apply a slight curve to make edges sharper but still smooth
+          double alpha = confidence;
+          if (alpha < 0.05) {
+            alpha = 0.0;
+          } else if (alpha > 0.95) {
+            alpha = 1.0;
           } else {
-            // Background pixel: fully transparent
+            // Smoothstep curve for natural transitions
+            alpha = alpha * alpha * (3.0 - 2.0 * alpha);
+          }
+          final alphaByte = (alpha * 255).toInt();
+          if (alphaByte > 0) {
+            final p = original.getPixel(x, y);
+            output.setPixelRgba(x, y, p.r.toInt(), p.g.toInt(), p.b.toInt(), alphaByte);
+          } else {
             output.setPixelRgba(x, y, 0, 0, 0, 0);
           }
         }
       }
 
-      if (foregroundCount < 100) {
+      if (strongFgCount < 100) {
         throw Exception(
-            'Soggetto troppo piccolo per essere uno sticker. Prova con una foto dove il soggetto occupa più spazio.');
+            'Soggetto troppo piccolo. Prova con una foto dove il soggetto occupa più spazio.');
       }
 
-      debugPrint('[MLKit] Foreground pixels: $foregroundCount / ${w * h}');
+      debugPrint('[MLKit] Strong fg pixels: $strongFgCount / ${w * h}');
 
-      // 5. Crop to bounding box of foreground (tighter sticker)
-      final cropped = _cropToForeground(output);
+      // 5. Optional crop to bounding box
+      final finalImage = autoCrop ? _cropToForeground(output) : output;
 
-      return Uint8List.fromList(img.encodePng(cropped));
+      return Uint8List.fromList(img.encodePng(finalImage));
     } finally {
       await segmenter.close();
     }
@@ -137,22 +141,25 @@ class MLKitService {
     }
 
     final dir = await getTemporaryDirectory();
-    final tempPath = '${dir.path}/mlkit_input_${DateTime.now().millisecondsSinceEpoch}.png';
+    final tempPath =
+        '${dir.path}/mlkit_input_${DateTime.now().millisecondsSinceEpoch}.png';
     await File(tempPath).writeAsBytes(img.encodePng(processed));
     return tempPath;
   }
 
-  /// Find bounding box of non-transparent pixels and crop with small padding.
+  /// Find bounding box of non-transparent pixels and crop with 10% padding.
   static img.Image _cropToForeground(img.Image image) {
     int minX = image.width;
     int minY = image.height;
     int maxX = 0;
     int maxY = 0;
 
+    // Use higher alpha threshold for crop bounds (avoids cropping too tight on feathered edges)
+    const cropThreshold = 80;
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
         final p = image.getPixel(x, y);
-        if (p.a > 30) {
+        if (p.a > cropThreshold) {
           if (x < minX) minX = x;
           if (y < minY) minY = y;
           if (x > maxX) maxX = x;
@@ -163,9 +170,9 @@ class MLKitService {
 
     if (minX >= maxX || minY >= maxY) return image;
 
-    // Add 5% padding around the subject
-    final padX = ((maxX - minX) * 0.05).round();
-    final padY = ((maxY - minY) * 0.05).round();
+    // 10% padding around the subject
+    final padX = ((maxX - minX) * 0.10).round();
+    final padY = ((maxY - minY) * 0.10).round();
     minX = (minX - padX).clamp(0, image.width).toInt();
     minY = (minY - padY).clamp(0, image.height).toInt();
     maxX = (maxX + padX).clamp(0, image.width).toInt();
