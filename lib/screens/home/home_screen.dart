@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../models/tool_item.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/tool_list_item.dart';
+import '../sticker_maker/sticker_maker_screen.dart';
+import '../wishes_maker/wishes_maker_screen.dart';
+import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,39 +21,35 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('WhatsKit'),
-        actions: [
-          IconButton(icon: const Icon(Icons.camera_alt_outlined), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+        title: Text(_titles[_currentIndex]),
+        actions: _currentIndex == 0
+            ? [
+                IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+                IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+              ]
+            : null,
+      ),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: const [
+          _ToolsTab(),
+          StickerMakerScreen(embedded: true),
+          WishesMakerScreen(embedded: true),
+          SettingsScreen(),
         ],
       ),
-      body: Column(
-        children: [
-          _buildSearchBar(),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                _buildSectionHeader('STRUMENTI WHATSAPP'),
-                ...kAllTools.map((tool) => ToolListItem(
-                      tool: tool,
-                      onTap: () => Navigator.of(context).pushNamed(tool.route),
-                    )),
-                _buildPremiumBanner(),
-                const SizedBox(height: 80),
-              ],
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pushNamed('/sticker'),
-        child: const Icon(Icons.edit, size: 22),
-      ),
+      floatingActionButton: _currentIndex == 0
+          ? FloatingActionButton(
+              onPressed: () => Navigator.of(context).pushNamed('/sticker'),
+              child: const Icon(Icons.edit, size: 22),
+            )
+          : null,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
+        onTap: (i) {
+          HapticFeedback.selectionClick();
+          setState(() => _currentIndex = i);
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.handyman_outlined), activeIcon: Icon(Icons.handyman), label: 'Tools'),
           BottomNavigationBarItem(icon: Icon(Icons.emoji_emotions_outlined), activeIcon: Icon(Icons.emoji_emotions), label: 'Stickers'),
@@ -57,6 +57,38 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), activeIcon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
+    );
+  }
+
+  static const _titles = ['WhatsKit', 'Sticker Maker', 'Wishes & Status', 'Impostazioni'];
+}
+
+class _ToolsTab extends StatelessWidget {
+  const _ToolsTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _buildSearchBar(),
+        Expanded(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              _buildSectionHeader('STRUMENTI WHATSAPP'),
+              ...kAllTools.map((tool) => ToolListItem(
+                    tool: tool,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      Navigator.of(context).pushNamed(tool.route);
+                    },
+                  )),
+              _buildPremiumBanner(),
+              const SizedBox(height: 80),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

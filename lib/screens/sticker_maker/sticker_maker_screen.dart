@@ -6,7 +6,8 @@ import '../../services/sticker_storage.dart';
 import 'sticker_editor_screen.dart';
 
 class StickerMakerScreen extends StatefulWidget {
-  const StickerMakerScreen({super.key});
+  final bool embedded;
+  const StickerMakerScreen({super.key, this.embedded = false});
 
   @override
   State<StickerMakerScreen> createState() => _StickerMakerScreenState();
@@ -146,6 +147,8 @@ class _StickerMakerScreenState extends State<StickerMakerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final body = _buildBody();
+    if (widget.embedded) return body;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -165,7 +168,16 @@ class _StickerMakerScreenState extends State<StickerMakerScreen> {
           IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
-      body: RefreshIndicator(
+      body: body,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showSourcePicker,
+        child: const Icon(Icons.add_a_photo),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return RefreshIndicator(
         onRefresh: _loadStickers,
         color: AppColors.waGreen,
         child: ListView(
@@ -282,12 +294,7 @@ class _StickerMakerScreenState extends State<StickerMakerScreen> {
             const SizedBox(height: 80),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showSourcePicker,
-        child: const Icon(Icons.add_a_photo),
-      ),
-    );
+      );
   }
 
   Widget _buildEmptyState() {
