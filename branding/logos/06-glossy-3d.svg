@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Logo 6: Glossy 3D Bubble -->
+  <defs>
+    <!-- 3D background sphere effect -->
+    <radialGradient id="bg6" cx="0.3" cy="0.25" r="0.9">
+      <stop offset="0%" stop-color="#5EEA9A"/>
+      <stop offset="40%" stop-color="#25D366"/>
+      <stop offset="100%" stop-color="#075E54"/>
+    </radialGradient>
+    <!-- Top highlight -->
+    <linearGradient id="highlight6" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="white" stop-opacity="0.5"/>
+      <stop offset="40%" stop-color="white" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Bubble 3D gradient -->
+    <radialGradient id="bubble6" cx="0.3" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#F5F5F5"/>
+      <stop offset="100%" stop-color="#D1D5DB"/>
+    </radialGradient>
+    <!-- Bubble inner shadow -->
+    <radialGradient id="bubbleShadow6" cx="0.7" cy="0.8" r="0.6">
+      <stop offset="0%" stop-color="black" stop-opacity="0"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.15"/>
+    </radialGradient>
+    <!-- Drop shadow filter -->
+    <filter id="shadow6" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offset"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.4"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 3D rounded square base -->
+  <rect width="512" height="512" rx="112" fill="url(#bg6)"/>
+  <!-- Top glossy highlight strip -->
+  <rect x="20" y="20" width="472" height="220" rx="92" fill="url(#highlight6)"/>
+
+  <!-- Chat bubble shape with 3D feel -->
+  <g filter="url(#shadow6)">
+    <path d="M 120 130
+             Q 120 100 150 100
+             L 380 100
+             Q 410 100 410 130
+             L 410 320
+             Q 410 350 380 350
+             L 230 350
+             L 150 410
+             L 180 350
+             L 150 350
+             Q 120 350 120 320
+             Z"
+          fill="url(#bubble6)"/>
+    <!-- Inner shadow on bubble -->
+    <path d="M 120 130
+             Q 120 100 150 100
+             L 380 100
+             Q 410 100 410 130
+             L 410 320
+             Q 410 350 380 350
+             L 230 350
+             L 150 410
+             L 180 350
+             L 150 350
+             Q 120 350 120 320
+             Z"
+          fill="url(#bubbleShadow6)"/>
+  </g>
+
+  <!-- Sparkle 3D in center -->
+  <g transform="translate(256 220)">
+    <defs>
+      <radialGradient id="star6" cx="0.4" cy="0.4" r="0.7">
+        <stop offset="0%" stop-color="#FFE66B"/>
+        <stop offset="60%" stop-color="#FFC93C"/>
+        <stop offset="100%" stop-color="#F59E0B"/>
+      </radialGradient>
+    </defs>
+    <!-- Star shadow -->
+    <path d="M 0 -55 L 13 -13 L 55 0 L 13 13 L 0 55 L -13 13 L -55 0 L -13 -13 Z"
+          fill="black" opacity="0.2" transform="translate(4 4)"/>
+    <!-- Star body -->
+    <path d="M 0 -55 L 13 -13 L 55 0 L 13 13 L 0 55 L -13 13 L -55 0 L -13 -13 Z"
+          fill="url(#star6)"/>
+    <!-- Star highlight -->
+    <ellipse cx="-12" cy="-15" rx="14" ry="8" fill="white" opacity="0.6"/>
+  </g>
+</svg>

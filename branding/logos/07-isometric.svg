@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Logo 7: Isometric Tools -->
+  <defs>
+    <linearGradient id="bg7" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#065F46"/>
+    </linearGradient>
+    <!-- Bubble isometric faces -->
+    <linearGradient id="bubbleFront7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E5E7EB"/>
+    </linearGradient>
+    <linearGradient id="bubbleSide7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D1D5DB"/>
+      <stop offset="100%" stop-color="#9CA3AF"/>
+    </linearGradient>
+    <linearGradient id="bubbleTop7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F9FAFB"/>
+      <stop offset="100%" stop-color="#F3F4F6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg7)"/>
+
+  <!-- Decorative dots -->
+  <circle cx="80" cy="80" r="6" fill="white" opacity="0.3"/>
+  <circle cx="430" cy="100" r="4" fill="white" opacity="0.25"/>
+  <circle cx="60" cy="430" r="5" fill="white" opacity="0.2"/>
+  <circle cx="450" cy="450" r="3" fill="white" opacity="0.3"/>
+
+  <!-- Isometric chat bubble (3 faces) -->
+  <g transform="translate(256 256)">
+    <!-- Bubble dimensions -->
+    <!-- Top face (parallelogram tilted) -->
+    <path d="M -130 -90
+             L -10 -130
+             L 130 -90
+             L 10 -50
+             Z"
+          fill="url(#bubbleTop7)" stroke="#9CA3AF" stroke-width="1.5"/>
+    <!-- Right side face -->
+    <path d="M 130 -90
+             L 130 30
+             L 10 70
+             L 10 -50
+             Z"
+          fill="url(#bubbleSide7)"/>
+    <!-- Front face -->
+    <path d="M -130 -90
+             L 10 -50
+             L 10 70
+             L -50 88
+             L -45 110
+             L -75 92
+             L -130 70
+             Z"
+          fill="url(#bubbleFront7)"/>
+
+    <!-- Sparkle on top face -->
+    <g transform="translate(0 -90) scale(0.7)">
+      <path d="M 0 -22 L 6 -6 L 22 0 L 6 6 L 0 22 L -6 6 L -22 0 L -6 -6 Z"
+            fill="#10B981"/>
+    </g>
+
+    <!-- Three dots on front face (typing indicator) -->
+    <ellipse cx="-85" cy="0" rx="14" ry="10" fill="#10B981"/>
+    <ellipse cx="-50" cy="10" rx="14" ry="10" fill="#10B981"/>
+    <ellipse cx="-15" cy="20" rx="14" ry="10" fill="#10B981"/>
+  </g>
+
+  <!-- Floating wrench top-right -->
+  <g transform="translate(380 165) rotate(25)">
+    <defs>
+      <linearGradient id="wrench7" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FCD34D"/>
+        <stop offset="100%" stop-color="#D97706"/>
+      </linearGradient>
+    </defs>
+    <path d="M -35 -8
+             Q -42 -22 -32 -32
+             Q -22 -42 -8 -35
+             Q -3 -25 -10 -15
+             L 35 30
+             Q 45 40 35 50
+             Q 25 60 15 50
+             L -30 5
+             Q -40 8 -42 0
+             Z"
+          fill="url(#wrench7)" stroke="#92400E" stroke-width="1.5"/>
+  </g>
+
+  <!-- Floating gear bottom-left -->
+  <g transform="translate(110 380)">
+    <defs>
+      <radialGradient id="gear7" cx="0.4" cy="0.4" r="0.6">
+        <stop offset="0%" stop-color="#FB7185"/>
+        <stop offset="100%" stop-color="#9F1239"/>
+      </radialGradient>
+    </defs>
+    <path d="M 0 -36 L 10 -32 L 18 -38 L 28 -28 L 22 -18 L 26 -8 L 36 -10
+             L 36 10 L 26 8 L 22 18 L 28 28 L 18 38 L 10 32 L 0 36
+             L -10 32 L -18 38 L -28 28 L -22 18 L -26 8 L -36 10
+             L -36 -10 L -26 -8 L -22 -18 L -28 -28 L -18 -38 L -10 -32 Z"
+          fill="url(#gear7)" stroke="#7F1D1D" stroke-width="1"/>
+    <circle cx="0" cy="0" r="14" fill="white"/>
+    <circle cx="0" cy="0" r="6" fill="#9F1239"/>
+  </g>
+</svg>

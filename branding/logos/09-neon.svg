@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Logo 9: Neon Glow -->
+  <defs>
+    <radialGradient id="bg9" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0%" stop-color="#064E3B"/>
+      <stop offset="100%" stop-color="#0F1B14"/>
+    </radialGradient>
+    <linearGradient id="neon9" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5EEAD4"/>
+      <stop offset="50%" stop-color="#22D3EE"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+    <radialGradient id="glow9" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="neonGlow9" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feGaussianBlur stdDeviation="12" result="bigBlur"/>
+      <feMerge>
+        <feMergeNode in="bigBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="strongGlow9" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b1"/>
+      <feGaussianBlur stdDeviation="8" result="b2"/>
+      <feGaussianBlur stdDeviation="20" result="b3"/>
+      <feMerge>
+        <feMergeNode in="b3"/>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg9)"/>
+
+  <!-- Background glow halo -->
+  <circle cx="256" cy="240" r="200" fill="url(#glow9)"/>
+
+  <!-- Grid pattern (cyber feel) -->
+  <g opacity="0.08" stroke="#22D3EE" stroke-width="0.5">
+    <line x1="0" y1="100" x2="512" y2="100"/>
+    <line x1="0" y1="200" x2="512" y2="200"/>
+    <line x1="0" y1="300" x2="512" y2="300"/>
+    <line x1="0" y1="400" x2="512" y2="400"/>
+    <line x1="100" y1="0" x2="100" y2="512"/>
+    <line x1="200" y1="0" x2="200" y2="512"/>
+    <line x1="300" y1="0" x2="300" y2="512"/>
+    <line x1="400" y1="0" x2="400" y2="512"/>
+  </g>
+
+  <!-- Outer glow chat bubble (neon outline) -->
+  <g filter="url(#neonGlow9)">
+    <path d="M 110 130
+             Q 110 100 140 100
+             L 372 100
+             Q 402 100 402 130
+             L 402 320
+             Q 402 350 372 350
+             L 230 350
+             L 150 410
+             L 175 350
+             L 140 350
+             Q 110 350 110 320
+             Z"
+          fill="none" stroke="url(#neon9)" stroke-width="6" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Inner stroke -->
+  <path d="M 110 130
+           Q 110 100 140 100
+           L 372 100
+           Q 402 100 402 130
+           L 402 320
+           Q 402 350 372 350
+           L 230 350
+           L 150 410
+           L 175 350
+           L 140 350
+           Q 110 350 110 320
+           Z"
+        fill="none" stroke="white" stroke-width="2"/>
+
+  <!-- Neon WK letter -->
+  <g transform="translate(256 230)" filter="url(#strongGlow9)">
+    <text x="0" y="20"
+          text-anchor="middle"
+          font-family="Arial Black, sans-serif"
+          font-weight="900"
+          font-size="120"
+          fill="#5EEAD4"
+          stroke="white"
+          stroke-width="2">WK</text>
+  </g>
+</svg>
