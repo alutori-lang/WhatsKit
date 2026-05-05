@@ -76,6 +76,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
         _chat.contactName = result['name'] as String;
         _chat.statusText = result['status'] as String;
         _chat.avatarPreset = result['avatar'] as AvatarPreset;
+        _chat.avatarPath = result['avatarPath'] as String?;
         _chat.isTyping = result['isTyping'] as bool;
       });
     }

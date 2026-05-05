@@ -70,6 +70,7 @@ const kAvatarPresets = <AvatarPreset>[
 class FakeChat {
   String contactName;
   AvatarPreset avatarPreset;
+  String? avatarPath; // path to custom avatar image (null = use gradient)
   String statusText;
   bool isTyping;
   List<FakeMessage> messages;
@@ -78,6 +79,7 @@ class FakeChat {
     required this.contactName,
     required this.avatarPreset,
     required this.statusText,
+    this.avatarPath,
     this.isTyping = false,
     List<FakeMessage>? messages,
   }) : messages = messages ?? [];

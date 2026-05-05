@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../models/fake_chat.dart';
 import '../../../theme/app_colors.dart';
@@ -37,19 +38,29 @@ class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
                 child: Container(
                   width: 40,
                   height: 40,
-                  decoration: BoxDecoration(
-                    gradient: chat.avatarPreset.gradient,
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: chat.avatarPath != null
+                      ? BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: FileImage(File(chat.avatarPath!)),
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : BoxDecoration(
+                          gradient: chat.avatarPreset.gradient,
+                          shape: BoxShape.circle,
+                        ),
                   alignment: Alignment.center,
-                  child: Text(
-                    chat.initial,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: chat.avatarPath == null
+                      ? Text(
+                          chat.initial,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : null,
                 ),
               ),
               const SizedBox(width: 12),
