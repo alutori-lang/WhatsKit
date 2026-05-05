@@ -49,3 +49,7 @@ app.*.map.json
 *.keystore
 *.jks
 key.properties
+# Branding generated outputs
+/branding/node_modules/
+/branding/output/
+/branding/package-lock.json
