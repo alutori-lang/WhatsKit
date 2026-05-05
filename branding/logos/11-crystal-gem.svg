@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Logo 11: Crystal AI Gem - Iridescent diamond -->
+  <defs>
+    <radialGradient id="bg11" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F0524"/>
+    </radialGradient>
+    <!-- Gem facets -->
+    <linearGradient id="facetTop11" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#F0ABFC"/>
+      <stop offset="50%" stop-color="#C084FC"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="facetLeft11" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#5B21B6"/>
+    </linearGradient>
+    <linearGradient id="facetRight11" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#831843"/>
+    </linearGradient>
+    <linearGradient id="facetBot11" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7E22CE"/>
+      <stop offset="100%" stop-color="#3B0764"/>
+    </linearGradient>
+    <linearGradient id="facetCenter11" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FAE8FF"/>
+      <stop offset="100%" stop-color="#D8B4FE"/>
+    </linearGradient>
+    <radialGradient id="halo11" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#A855F7" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#A855F7" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow11" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg11)"/>
+
+  <!-- Halo glow behind gem -->
+  <circle cx="256" cy="256" r="180" fill="url(#halo11)"/>
+
+  <!-- Stars background -->
+  <g fill="white">
+    <circle cx="80" cy="100" r="2" opacity="0.8"/>
+    <circle cx="420" cy="80" r="1.5" opacity="0.6"/>
+    <circle cx="450" cy="200" r="2.5" opacity="0.9"/>
+    <circle cx="60" cy="300" r="1" opacity="0.5"/>
+    <circle cx="430" cy="400" r="2" opacity="0.7"/>
+    <circle cx="100" cy="450" r="1.5" opacity="0.6"/>
+    <circle cx="380" cy="450" r="1" opacity="0.4"/>
+    <circle cx="200" cy="60" r="1.5" opacity="0.7"/>
+    <circle cx="320" cy="430" r="1" opacity="0.5"/>
+  </g>
+
+  <!-- Diamond gem (faceted) -->
+  <g transform="translate(256 256)">
+    <!-- Top facets -->
+    <polygon points="-100,-40 0,-130 100,-40 50,-50 0,-90 -50,-50"
+             fill="url(#facetTop11)"/>
+    <!-- Center top -->
+    <polygon points="-50,-50 0,-90 50,-50 0,-20"
+             fill="url(#facetCenter11)"/>
+    <!-- Left side -->
+    <polygon points="-100,-40 -50,-50 0,-20 -30,80"
+             fill="url(#facetLeft11)"/>
+    <!-- Right side -->
+    <polygon points="100,-40 50,-50 0,-20 30,80"
+             fill="url(#facetRight11)"/>
+    <!-- Bottom point -->
+    <polygon points="-30,80 0,130 30,80 0,-20"
+             fill="url(#facetBot11)"/>
+    <!-- Highlight on top facet -->
+    <polygon points="-30,-90 0,-110 30,-90 0,-70"
+             fill="white" opacity="0.5"/>
+  </g>
+
+  <!-- Floating sparkles -->
+  <g fill="white">
+    <path d="M 130 200 L 132 205 L 137 207 L 132 209 L 130 214 L 128 209 L 123 207 L 128 205 Z" opacity="0.9"/>
+    <path d="M 380 320 L 382 325 L 387 327 L 382 329 L 380 334 L 378 329 L 373 327 L 378 325 Z" opacity="0.8"/>
+    <path d="M 410 250 L 411 253 L 414 254 L 411 255 L 410 258 L 409 255 L 406 254 L 409 253 Z" opacity="0.7"/>
+    <path d="M 110 380 L 111 383 L 114 384 L 111 385 L 110 388 L 109 385 L 106 384 L 109 383 Z" opacity="0.7"/>
+  </g>
+</svg>

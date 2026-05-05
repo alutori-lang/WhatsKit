@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Logo 13: Liquid Chrome - abstract metallic blob -->
+  <defs>
+    <linearGradient id="bg13" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="chrome13" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F8FAFC"/>
+      <stop offset="20%" stop-color="#E2E8F0"/>
+      <stop offset="35%" stop-color="#A78BFA"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="65%" stop-color="#1E40AF"/>
+      <stop offset="80%" stop-color="#6D28D9"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
+    </linearGradient>
+    <radialGradient id="orb13a" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orb13b" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="highlight13" cx="0.3" cy="0.2" r="0.5">
+      <stop offset="0%" stop-color="white" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur13" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg13)"/>
+
+  <!-- Background colored orbs (blurred for ambient light) -->
+  <g filter="url(#blur13)">
+    <circle cx="120" cy="380" r="100" fill="url(#orb13a)"/>
+    <circle cx="400" cy="120" r="100" fill="url(#orb13b)"/>
+  </g>
+
+  <!-- Liquid blob shape - abstract organic flowing -->
+  <g transform="translate(256 256)">
+    <path d="M -40 -150
+             C 60 -160 130 -110 140 -30
+             C 150 50 110 100 60 130
+             C -10 165 -90 150 -130 90
+             C -170 30 -160 -50 -120 -100
+             C -90 -135 -80 -145 -40 -150 Z"
+          fill="url(#chrome13)"/>
+
+    <!-- Top highlight -->
+    <ellipse cx="-30" cy="-90" rx="65" ry="35"
+             fill="url(#highlight13)" opacity="0.85"/>
+
+    <!-- Bottom small reflection -->
+    <ellipse cx="40" cy="100" rx="35" ry="15"
+             fill="white" opacity="0.3"/>
+
+    <!-- Liquid drop being released -->
+    <ellipse cx="100" cy="-70" rx="14" ry="20"
+             fill="url(#chrome13)" transform="rotate(20 100 -70)"/>
+    <circle cx="115" cy="-105" r="6" fill="#A78BFA" opacity="0.9"/>
+
+    <!-- Sound wave arcs (communication theme) -->
+    <g stroke="white" stroke-width="2" fill="none" opacity="0.5">
+      <path d="M -180 -30 Q -200 0 -180 30"/>
+      <path d="M -200 -50 Q -230 0 -200 50"/>
+      <path d="M 180 -30 Q 200 0 180 30"/>
+      <path d="M 200 -50 Q 230 0 200 50"/>
+    </g>
+  </g>
+
+  <!-- Top corner sparkle -->
+  <g transform="translate(420 100)" fill="white" opacity="0.7">
+    <path d="M 0 -16 L 4 -4 L 16 0 L 4 4 L 0 16 L -4 4 L -16 0 L -4 -4 Z"/>
+  </g>
+</svg>

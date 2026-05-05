@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Logo 12: Puffy Star 3D - Claymorphism -->
+  <defs>
+    <linearGradient id="bg12" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFE4E6"/>
+      <stop offset="50%" stop-color="#FECACA"/>
+      <stop offset="100%" stop-color="#FCA5A5"/>
+    </linearGradient>
+    <radialGradient id="star12" cx="0.35" cy="0.3" r="0.7">
+      <stop offset="0%" stop-color="#FEF3C7"/>
+      <stop offset="30%" stop-color="#FCD34D"/>
+      <stop offset="70%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#C2410C"/>
+    </radialGradient>
+    <radialGradient id="starHighlight12" cx="0.3" cy="0.25" r="0.4">
+      <stop offset="0%" stop-color="white" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="puffyShadow12" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+      <feOffset dx="0" dy="12"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.4"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="cheek12" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FDA4AF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FDA4AF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg12)"/>
+
+  <!-- Decorative tiny stars in background -->
+  <g fill="#F9A8D4" opacity="0.5">
+    <circle cx="80" cy="100" r="6"/>
+    <circle cx="430" cy="120" r="5"/>
+    <circle cx="60" cy="400" r="7"/>
+    <circle cx="450" cy="380" r="4"/>
+  </g>
+
+  <!-- Puffy 3D star (5 points, rounded/inflated) -->
+  <g transform="translate(256 256)" filter="url(#puffyShadow12)">
+    <!-- Base inflated star shape -->
+    <path d="M 0 -160
+             C 25 -160 38 -120 50 -80
+             C 80 -55 130 -50 155 -50
+             C 175 -50 175 -25 160 0
+             C 130 25 105 60 95 90
+             C 95 115 110 145 90 155
+             C 70 165 40 145 0 125
+             C -40 145 -70 165 -90 155
+             C -110 145 -95 115 -95 90
+             C -105 60 -130 25 -160 0
+             C -175 -25 -175 -50 -155 -50
+             C -130 -50 -80 -55 -50 -80
+             C -38 -120 -25 -160 0 -160 Z"
+          fill="url(#star12)"/>
+
+    <!-- Highlight bubble -->
+    <ellipse cx="-30" cy="-70" rx="40" ry="28"
+             fill="url(#starHighlight12)" opacity="0.8"/>
+
+    <!-- Eyes -->
+    <ellipse cx="-32" cy="-15" rx="11" ry="14" fill="#1F2937"/>
+    <ellipse cx="32" cy="-15" rx="11" ry="14" fill="#1F2937"/>
+    <circle cx="-29" cy="-20" r="4" fill="white"/>
+    <circle cx="35" cy="-20" r="4" fill="white"/>
+
+    <!-- Smile -->
+    <path d="M -30 25 Q 0 60 30 25"
+          fill="none" stroke="#1F2937" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Cheeks -->
+    <ellipse cx="-58" cy="20" rx="16" ry="10" fill="url(#cheek12)"/>
+    <ellipse cx="58" cy="20" rx="16" ry="10" fill="url(#cheek12)"/>
+  </g>
+</svg>
