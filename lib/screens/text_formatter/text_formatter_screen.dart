@@ -39,8 +39,6 @@ class _TextFormatterScreenState extends State<TextFormatterScreen> {
       _convert(s, '𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁0123456789');
   String _script(String s) =>
       _convert(s, '𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩0123456789');
-  String _scriptBold(String s) =>
-      _convert(s, '𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩0123456789');
   String _gothic(String s) =>
       _convert(s, '𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟𝕬𝕭𝕮𝕯𝕰𝕱𝕲𝕳𝕴𝕵𝕶𝕷𝕸𝕹𝕺𝕻𝕼𝕽𝕾𝕿𝖀𝖁𝖂𝖃𝖄𝖅0123456789');
   String _doubleStruck(String s) =>
@@ -69,6 +67,66 @@ class _TextFormatterScreenState extends State<TextFormatterScreen> {
   String _smallCaps(String s) =>
       _convert(s, 'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀꜱᴛᴜᴠᴡxʏᴢABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 
+  // ===== DECORATED STYLES (colorful with emoji symbols) =====
+  String _flag(String s) {
+    // Regional indicator letters - render as colorful flag pairs on Android
+    return s.split('').map((c) {
+      final code = c.toUpperCase().codeUnitAt(0);
+      if (code >= 65 && code <= 90) {
+        // A-Z → regional indicator U+1F1E6 + (code - 65)
+        return '${String.fromCharCode(0x1F1E6 + (code - 65))} ';
+      }
+      return '$c ';
+    }).join().trimRight();
+  }
+
+  String _sparkleEach(String s) =>
+      '✨ ${s.split('').join(' ✨ ')} ✨';
+  String _heartEach(String s) =>
+      '❤️ ${s.split('').join(' ❤️ ')} ❤️';
+  String _starEach(String s) =>
+      '⭐ ${s.split('').join(' ⭐ ')} ⭐';
+  String _fireEach(String s) =>
+      '🔥 ${s.split('').join(' 🔥 ')} 🔥';
+  String _flowerEach(String s) =>
+      '🌸 ${s.split('').join(' 🌸 ')} 🌸';
+
+  String _crownWrap(String s) => '👑 ・ $s ・ 👑';
+  String _heartWrap(String s) => '╰┈➤ $s ❤️';
+  String _diamondWrap(String s) => '💎 ✦ $s ✦ 💎';
+  String _waveWrap(String s) => '꧁ $s ꧂';
+  String _arrowWrap(String s) => '➶❥ $s ❥➷';
+  String _starsWrap(String s) => '★彡 $s 彡★';
+  String _butterfly(String s) => '🦋 ${s.split('').join('・')} 🦋';
+  String _moonWrap(String s) => '✦ ☾ $s ☽ ✦';
+  String _quoteWrap(String s) => '" ✧ $s ✧ "';
+
+  // Frame box (multiline)
+  String _frameBox(String s) {
+    final width = s.length + 4;
+    final top = '╔${'═' * width}╗';
+    final mid = '║  $s  ║';
+    final bot = '╚${'═' * width}╝';
+    return '$top\n$mid\n$bot';
+  }
+  String _doubleFrame(String s) {
+    final width = s.length + 4;
+    return '┌${'─' * width}┐\n│  $s  │\n└${'─' * width}┘';
+  }
+
+  // Combining characters (strikethrough, underline)
+  String _strikethrough(String s) =>
+      s.split('').map((c) => '$c̶').join();
+  String _underline(String s) =>
+      s.split('').map((c) => '$c̲').join();
+  String _doubleUnderline(String s) =>
+      s.split('').map((c) => '$c̳').join();
+  String _overline(String s) =>
+      s.split('').map((c) => '$c̅').join();
+
+  // Reverse / upside down (basic)
+  String _reverse(String s) => s.split('').reversed.join();
+
   Future<void> _copy(String value, String name) async {
     HapticFeedback.lightImpact();
     await Clipboard.setData(ClipboardData(text: value));
@@ -88,25 +146,61 @@ class _TextFormatterScreenState extends State<TextFormatterScreen> {
   Widget build(BuildContext context) {
     final input = _controller.text.isEmpty ? 'Hello' : _controller.text;
     final fonts = <Map<String, String>>[
-      {'name': 'Bold', 'value': _bold(input)},
-      {'name': 'Italic', 'value': _italic(input)},
-      {'name': 'Bold Italic', 'value': _boldItalic(input)},
-      {'name': 'Script', 'value': _script(input)},
-      {'name': 'Script Bold', 'value': _scriptBold(input)},
-      {'name': 'Gothic', 'value': _gothic(input)},
-      {'name': 'Double Struck', 'value': _doubleStruck(input)},
-      {'name': 'Sans Serif', 'value': _sans(input)},
-      {'name': 'Monospace', 'value': _mono(input)},
-      {'name': 'Small Caps', 'value': _smallCaps(input)},
-      {'name': 'Circled', 'value': _circled(input)},
-      {'name': 'Filled', 'value': _filled(input)},
-      {'name': 'Square', 'value': _square(input)},
+      // ===== FANCY UNICODE FONTS =====
+      {'name': '𝐁𝐨𝐥𝐝', 'value': _bold(input)},
+      {'name': '𝐼𝑡𝑎𝑙𝑖𝑐', 'value': _italic(input)},
+      {'name': '𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄', 'value': _boldItalic(input)},
+      {'name': '𝓢𝓬𝓻𝓲𝓹𝓽', 'value': _script(input)},
+      {'name': '𝕲𝖔𝖙𝖍𝖎𝖈', 'value': _gothic(input)},
+      {'name': '𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜', 'value': _doubleStruck(input)},
+      {'name': '𝖲𝖺𝗇𝗌 𝖲𝖾𝗋𝗂𝖿', 'value': _sans(input)},
+      {'name': '𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎', 'value': _mono(input)},
+      {'name': 'sᴍᴀʟʟ ᴄᴀᴘs', 'value': _smallCaps(input)},
+      {'name': 'Ⓒⓘⓡⓒⓛⓔⓓ', 'value': _circled(input)},
+      {'name': '🅕🅘🅛🅛🅔🅓', 'value': _filled(input)},
+      {'name': '🄶🅀🅄🄰🅁🄴🄳', 'value': _square(input)},
       {'name': 'Full Width', 'value': _wide(input)},
       {'name': 'S p a c e d', 'value': _spaced(input)},
-      {'name': 'WhatsApp Bold', 'value': '*$input*'},
-      {'name': 'WhatsApp Italic', 'value': '_${input}_'},
-      {'name': 'WhatsApp Strike', 'value': '~$input~'},
-      {'name': 'WhatsApp Mono', 'value': '```$input```'},
+
+      // ===== COLORFUL EMOJI FLAGS =====
+      {'name': '🇫🇱🇦🇬 Flag Letters', 'value': _flag(input)},
+
+      // ===== DECORATED WITH SYMBOLS =====
+      {'name': '✨ Sparkle Each', 'value': _sparkleEach(input)},
+      {'name': '❤️ Heart Each', 'value': _heartEach(input)},
+      {'name': '⭐ Star Each', 'value': _starEach(input)},
+      {'name': '🔥 Fire Each', 'value': _fireEach(input)},
+      {'name': '🌸 Flower Each', 'value': _flowerEach(input)},
+      {'name': '🦋 Butterfly', 'value': _butterfly(input)},
+
+      // ===== WRAPPED STYLES =====
+      {'name': '👑 Crown', 'value': _crownWrap(input)},
+      {'name': '╰┈➤ Heart Arrow', 'value': _heartWrap(input)},
+      {'name': '💎 Diamond', 'value': _diamondWrap(input)},
+      {'name': '꧁ ꧂ Royal Wave', 'value': _waveWrap(input)},
+      {'name': '➶❥ Arrow Heart', 'value': _arrowWrap(input)},
+      {'name': '★彡 Stars', 'value': _starsWrap(input)},
+      {'name': '☾ ☽ Moon', 'value': _moonWrap(input)},
+      {'name': '" ✧ Quote ✧ "', 'value': _quoteWrap(input)},
+
+      // ===== FRAME BOXES =====
+      {'name': '╔═╗ Frame Double', 'value': _frameBox(input)},
+      {'name': '┌─┐ Frame Light', 'value': _doubleFrame(input)},
+
+      // ===== COMBINING (strike, underline) =====
+      {'name': 'S̶t̶r̶i̶k̶e̶t̶h̶r̶o̶u̶g̶h̶', 'value': _strikethrough(input)},
+      {'name': 'U̲n̲d̲e̲r̲l̲i̲n̲e̲', 'value': _underline(input)},
+      {'name': 'D̳o̳u̳b̳l̳e̳ ̳U̳n̳d̳e̳r̳l̳i̳n̳e̳', 'value': _doubleUnderline(input)},
+      {'name': 'O̅v̅e̅r̅l̅i̅n̅e̅', 'value': _overline(input)},
+
+      // ===== REVERSE =====
+      {'name': '◀ Reverse', 'value': _reverse(input)},
+
+      // ===== WHATSAPP MARKDOWN =====
+      {'name': '*WhatsApp Bold*', 'value': '*$input*'},
+      {'name': '_WhatsApp Italic_', 'value': '_${input}_'},
+      {'name': '~WhatsApp Strike~', 'value': '~$input~'},
+      {'name': '```WhatsApp Mono```', 'value': '```$input```'},
     ];
 
     return Scaffold(
@@ -246,9 +340,10 @@ class _TextFormatterScreenState extends State<TextFormatterScreen> {
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: AppColors.textPrimary,
+                                  height: 1.2,
                                 ),
                                 overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
+                                maxLines: 3,
                               ),
                             ),
                             const SizedBox(width: 8),
