@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Whatskit</string>
+	<string>WhatsKit</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>whatskit</string>
+	<string>WhatsKit</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -45,5 +45,38 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Privacy permissions for Sticker Maker (camera + photo library) -->
+	<key>NSCameraUsageDescription</key>
+	<string>WhatsKit needs camera access to let you take photos for your custom stickers.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>WhatsKit needs photo library access to select images for stickers and chat avatars.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>WhatsKit needs permission to save your created stickers and shared images.</string>
+
+	<!-- Open WhatsApp via universal link -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>https</string>
+		<string>http</string>
+	</array>
+
+	<!-- App Transport Security: allow remove.bg API + WhatsApp -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>api.remove.bg</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
 </dict>
 </plist>
