@@ -18,11 +18,34 @@ class _WishesMakerScreenState extends State<WishesMakerScreen> {
   List<WishCard> get _filtered =>
       kAllWishes.where((w) => w.category == _selectedCategory).toList();
 
+  void _openCreateMode(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => const WishDetailScreen(createMode: true),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context)!;
     final body = _buildBody(s);
-    if (widget.embedded) return body;
+    if (widget.embedded) {
+      return Stack(
+        children: [
+          body,
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: FloatingActionButton.extended(
+              onPressed: () => _openCreateMode(context),
+              icon: const Icon(Icons.edit),
+              label: const Text('Crea Status'),
+              backgroundColor: AppColors.waGreen,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -42,6 +65,13 @@ class _WishesMakerScreenState extends State<WishesMakerScreen> {
         ],
       ),
       body: body,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _openCreateMode(context),
+        icon: const Icon(Icons.edit),
+        label: const Text('Crea Status'),
+        backgroundColor: AppColors.waGreen,
+        foregroundColor: Colors.white,
+      ),
     );
   }
 

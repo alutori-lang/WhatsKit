@@ -8,8 +8,10 @@ import '../../models/wish_card.dart';
 import '../../theme/app_colors.dart';
 
 class WishDetailScreen extends StatefulWidget {
-  final WishCard wish;
-  const WishDetailScreen({super.key, required this.wish});
+  final WishCard? wish;
+  final bool createMode;
+  const WishDetailScreen({super.key, this.wish, this.createMode = false})
+      : assert(wish != null || createMode == true);
 
   @override
   State<WishDetailScreen> createState() => _WishDetailScreenState();
@@ -33,8 +35,13 @@ class _WishDetailScreenState extends State<WishDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController(text: widget.wish.text);
-    _selectedGradient = widget.wish.gradient;
+    if (widget.createMode) {
+      _textController = TextEditingController();
+      _selectedGradient = AppColors.gradientPink;
+    } else {
+      _textController = TextEditingController(text: widget.wish!.text);
+      _selectedGradient = widget.wish!.gradient;
+    }
   }
 
   @override
@@ -101,9 +108,9 @@ class _WishDetailScreenState extends State<WishDetailScreen> {
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Personalizza',
-          style: TextStyle(
+        title: Text(
+          widget.createMode ? 'Crea Status' : 'Personalizza',
+          style: const TextStyle(
             color: AppColors.textPrimary,
             fontSize: 19,
             fontWeight: FontWeight.w500,
@@ -136,20 +143,21 @@ class _WishDetailScreenState extends State<WishDetailScreen> {
                       padding: const EdgeInsets.all(32),
                       child: Stack(
                         children: [
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.25),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                widget.wish.lang,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
+                          if (!widget.createMode)
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  widget.wish!.lang,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
