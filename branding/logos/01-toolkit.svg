@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Logo 1: Toolkit Classic -->
+  <!-- Green rounded square background (WhatsApp-style) -->
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#25D366"/>
+      <stop offset="100%" stop-color="#1FAB54"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg1)"/>
+
+  <!-- White chat bubble with tail -->
+  <path d="M 130 130
+           Q 130 100 160 100
+           L 380 100
+           Q 410 100 410 130
+           L 410 320
+           Q 410 350 380 350
+           L 220 350
+           L 150 410
+           L 175 350
+           L 160 350
+           Q 130 350 130 320
+           Z"
+        fill="white"/>
+
+  <!-- Wrench icon inside bubble -->
+  <g transform="translate(260 215) rotate(-45)">
+    <!-- Wrench body -->
+    <path d="M -85 -15
+             Q -100 -30 -85 -45
+             Q -75 -55 -60 -55
+             Q -50 -55 -42 -47
+             Q -52 -25 -33 -10
+             Q -14 5 8 -5
+             L 90 35
+             Q 105 50 90 65
+             Q 75 80 60 65
+             L -22 25
+             Q -45 35 -65 25
+             Q -85 15 -85 -15 Z"
+          fill="#008069"/>
+  </g>
+
+  <!-- Sparkle accent -->
+  <circle cx="375" cy="155" r="12" fill="#FFD700" opacity="0.9"/>
+  <circle cx="395" cy="195" r="6" fill="#FFD700" opacity="0.7"/>
+</svg>

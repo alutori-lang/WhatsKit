@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Logo 2: AI Sparkle -->
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <radialGradient id="glow2" cx="0.5" cy="0.4" r="0.7">
+      <stop offset="0%" stop-color="white" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg2)"/>
+  <rect width="512" height="512" rx="112" fill="url(#glow2)"/>
+
+  <!-- White chat bubble with tail -->
+  <path d="M 110 130
+           Q 110 100 140 100
+           L 372 100
+           Q 402 100 402 130
+           L 402 330
+           Q 402 360 372 360
+           L 230 360
+           L 145 420
+           L 175 360
+           L 140 360
+           Q 110 360 110 330
+           Z"
+        fill="white"/>
+
+  <!-- Big sparkle star (4-point) center -->
+  <g transform="translate(256 220)">
+    <path d="M 0 -70
+             L 14 -14
+             L 70 0
+             L 14 14
+             L 0 70
+             L -14 14
+             L -70 0
+             L -14 -14 Z"
+          fill="#10B981"/>
+    <path d="M 0 -50
+             L 10 -10
+             L 50 0
+             L 10 10
+             L 0 50
+             L -10 10
+             L -50 0
+             L -10 -10 Z"
+          fill="#34D399"/>
+  </g>
+
+  <!-- Smaller sparkles -->
+  <g transform="translate(165 175)">
+    <path d="M 0 -22 L 5 -5 L 22 0 L 5 5 L 0 22 L -5 5 L -22 0 L -5 -5 Z"
+          fill="#10B981" opacity="0.8"/>
+  </g>
+  <g transform="translate(355 250)">
+    <path d="M 0 -16 L 4 -4 L 16 0 L 4 4 L 0 16 L -4 4 L -16 0 L -4 -4 Z"
+          fill="#10B981" opacity="0.7"/>
+  </g>
+  <g transform="translate(310 165)">
+    <path d="M 0 -12 L 3 -3 L 12 0 L 3 3 L 0 12 L -3 3 L -12 0 L -3 -3 Z"
+          fill="#10B981" opacity="0.6"/>
+  </g>
+</svg>
